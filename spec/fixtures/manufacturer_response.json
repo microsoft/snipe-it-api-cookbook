@@ -1,0 +1,32 @@
+{
+  "total": 1,
+  "rows": [
+      {
+          "id": 4,
+          "name": "Spaghetti",
+          "url": "https://www.apple.com",
+          "image": null,
+          "support_url": "",
+          "support_phone": "",
+          "support_email": "",
+          "assets_count": 0,
+          "licenses_count": 0,
+          "consumables_count": 0,
+          "accessories_count": 0,
+          "created_at": {
+              "datetime": "2018-10-10 12:27:07",
+              "formatted": "2018-10-10 12:27 PM"
+          },
+          "updated_at": {
+              "datetime": "2018-10-10 12:27:07",
+              "formatted": "2018-10-10 12:27 PM"
+          },
+          "deleted_at": null,
+          "available_actions": {
+              "update": true,
+              "restore": false,
+              "delete": true
+          }
+      }
+  ]
+}

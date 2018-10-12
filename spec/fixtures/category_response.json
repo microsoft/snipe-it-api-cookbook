@@ -1,0 +1,31 @@
+{
+    "total": 1,
+    "rows": [
+        {
+            "id": 1,
+            "name": "Misc Software",
+            "image": null,
+            "category_type": "license",
+            "eula": false,
+            "checkin_email": false,
+            "require_acceptance": false,
+            "assets_count": 0,
+            "accessories_count": 0,
+            "consumables_count": 0,
+            "components_count": 0,
+            "licenses_count": 0,
+            "created_at": {
+                "datetime": "2018-10-08 16:24:33",
+                "formatted": "2018-10-08 04:24 PM"
+            },
+            "updated_at": {
+                "datetime": "2018-10-08 16:24:33",
+                "formatted": "2018-10-08 04:24 PM"
+            },
+            "available_actions": {
+                "update": true,
+                "delete": true
+            }
+        }
+    ]
+}
