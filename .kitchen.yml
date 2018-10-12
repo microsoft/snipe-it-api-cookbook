@@ -1,0 +1,27 @@
+---
+driver:
+  name: vagrant
+
+provisioner:
+  product_name: chef
+  product_version: latest
+  always_update_cookbooks: true
+  multiple_converge: 2
+  enforce_idempotency: true
+
+verifier:
+  name: inspec
+  reporter:
+    - cli
+    - junit:/tmp/junit.xml
+  inspec_tests:
+    - test/integration/default
+
+platforms:
+  - name: macos-10.13
+  - name: macos-10.14
+
+suites:
+  - name: default
+    run_list:
+      - recipe[snipeit_api_test::configure_snipeit]

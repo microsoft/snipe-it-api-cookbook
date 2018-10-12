@@ -1,2 +1,2 @@
-default['snipe-it']['api']['instance'] = 'http://snipe-it.mycompany.com'
-default['snipe-it']['api']['token'] = nil
+default['snipeit']['api']['instance'] = 'http://snipe-it.mycompany.com'
+default['snipeit']['api']['token'] = ''
