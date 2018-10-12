@@ -2,11 +2,16 @@ require 'spec_helper'
 
 shared_examples 'create Apple manufacturer' do
   recipe do
+    api_token = node['snipeit']['api']['token']
+
     manufacturer 'Apple' do
       website 'https://www.apple.com'
+      token api_token
     end
 
-    manufacturer 'Spaghetti'
+    manufacturer 'Spaghetti' do
+      token api_token
+    end
   end
 end
 

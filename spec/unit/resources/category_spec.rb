@@ -2,11 +2,16 @@ require 'spec_helper'
 
 shared_examples 'category' do
   recipe do
+    api_token = node['snipeit']['api']['token']
+
     category 'Desktop - macOS' do
       category_type 'asset'
+      token api_token
     end
 
-    category 'Misc Software'
+    category 'Misc Software' do
+      token api_token
+    end
   end
 end
 
