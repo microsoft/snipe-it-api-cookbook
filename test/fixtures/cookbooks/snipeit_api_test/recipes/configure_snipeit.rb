@@ -17,3 +17,10 @@ categories.each do |name, type|
     category_type type
   end
 end
+
+model 'Mac Pro (Early 2009)' do
+  manufacturer 'Apple'
+  category 'macOS - Desktop'
+  model_number 'MacPro4,1'
+  token api_token
+end
