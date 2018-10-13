@@ -10,8 +10,8 @@ property :category_type, String, required: true
 default_action :create
 
 load_current_value do |new_resource|
-  categories = snipeit_endpoint(new_resource.url, 'categories')
-  response = http_get(categories, new_resource.token)
+  url = Endpoint.new(new_resource.url)
+  response = Get.new(url.categories_endpoint, new_resource.token).response
 
   if record_exists?(response, new_resource.category)
     category = current_record(response, new_resource.category)
@@ -24,6 +24,8 @@ end
 
 action :create do
   converge_if_changed :category do
+    url = Endpoint.new(new_resource.url)
+
     converge_by("created #{new_resource} in Snipe-IT") do
       http_request "create #{new_resource}" do
         headers authorization_headers(new_resource.token)
@@ -31,7 +33,7 @@ action :create do
           name: new_resource.category,
           category_type: new_resource.category_type,
         }.to_json)
-        url snipeit_endpoint(new_resource.url, 'categories')
+        url url.categories_endpoint
         action :post
       end
     end
