@@ -14,11 +14,11 @@ property :fieldset, String
 default_action :create
 
 load_current_value do |new_resource|
-  url = Endpoint.new(new_resource.url)
-  response = Get.new(url.models_endpoint, new_resource.token).response
+  endpoint = Endpoint.new(new_resource.url, new_resource.token)
+  response = Get.new(endpoint.models, new_resource.token, new_resource.model)
 
   begin
-    model = current_record(response, new_resource.model)
+    model = response.current_record if response.record_exists?
     model model['name']
   rescue
     current_value_does_not_exist!
@@ -27,28 +27,32 @@ end
 
 action :create do
   converge_if_changed :model do
-    url = Endpoint.new(new_resource.url)
-    token = new_resource.token
-    categories_response = Get.new(url.categories_endpoint, token).response
-    manufacturers_response = Get.new(url.manufacturers_endpoint, token).response
-    fieldsets_response = Get.new(url.fieldsets_endpoint, token).response
-    category = current_record(categories_response, new_resource.category)
-    manufacturer = current_record(manufacturers_response, new_resource.manufacturer)
-    fieldset = current_record(fieldsets_response, new_resource.fieldset)['id'] if property_is_set?(:fieldset)
+    endpoint = Endpoint.new(new_resource.url, new_resource.token)
+    category_response = Get.new(endpoint.categories, new_resource.token, new_resource.category)
+    manufacturer_response = Get.new(endpoint.manufacturers, new_resource.token, new_resource.manufacturer)
+    fieldset_response = Get.new(endpoint.fieldsets, new_resource.token, new_resource.fieldset)
+    category = category_response.current_record['id'] if category_response.record_exists?
+    manufacturer = manufacturer_response.current_record['id'] if manufacturer_response.record_exists?
+
+    if property_is_set?(:fieldset)
+      if fieldset_response.record_exists?
+        fieldset = fieldset_response.current_record['id']
+      end
+    end
 
     message = {}
     message[:name] = new_resource.model
     message[:model_number] = new_resource.model_number if property_is_set?(:model_number)
-    message[:category_id] = category['id']
-    message[:manufacturer_id] = manufacturer['id']
+    message[:category_id] = category
+    message[:manufacturer_id] = manufacturer
     message[:eol] = new_resource.eol if property_is_set?(:eol)
-    message[:fieldset_id] = fieldset['id'] unless fieldset.nil?
+    message[:fieldset_id] = fieldset if property_is_set?(:fieldset)
 
     converge_by("creating #{new_resource} in Snipe-IT") do
       http_request "create #{new_resource}" do
-        headers authorization_headers(new_resource.token)
+        headers endpoint.headers
         message message.to_json
-        url url.models_endpoint
+        url endpoint.models
         action :post
       end
     end
