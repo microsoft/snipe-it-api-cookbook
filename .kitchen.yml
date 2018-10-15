@@ -18,6 +18,7 @@ verifier:
     - test/integration/default
 
 platforms:
+  - name: ubuntu-18.04
   - name: macos-10.13
   - name: macos-10.14
 
@@ -25,3 +26,5 @@ suites:
   - name: default
     run_list:
       - recipe[snipeit_api_test::configure_snipeit]
+    includes:
+      - ubuntu-18.04
