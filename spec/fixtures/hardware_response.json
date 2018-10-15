@@ -1,0 +1,69 @@
+{
+  "total": 1,
+  "rows": [
+    {
+      "id": 1,
+      "name": "",
+      "asset_tag": "1234567",
+      "serial": "",
+      "model": {
+        "id": 4,
+        "name": "Mac Pro (Early 2009)"
+      },
+      "model_number": "MacPro4,1",
+      "eol": null,
+      "status_label": {
+        "id": 1,
+        "name": "Pending",
+        "status_type": "pending",
+        "status_meta": "pending"
+      },
+      "category": {
+        "id": 2,
+        "name": "macOS - Desktop"
+      },
+      "manufacturer": {
+        "id": 7,
+        "name": "Apple"
+      },
+      "supplier": null,
+      "notes": null,
+      "order_number": null,
+      "company": null,
+      "location": null,
+      "rtd_location": null,
+      "image": null,
+      "assigned_to": null,
+      "warranty_months": null,
+      "warranty_expires": null,
+      "created_at": {
+        "datetime": "2018-10-15 09:21:13",
+        "formatted": "2018-10-15 09:21 AM"
+      },
+      "updated_at": {
+        "datetime": "2018-10-15 09:21:13",
+        "formatted": "2018-10-15 09:21 AM"
+      },
+      "last_audit_date": null,
+      "next_audit_date": null,
+      "deleted_at": null,
+      "purchase_date": null,
+      "last_checkout": null,
+      "expected_checkin": null,
+      "purchase_cost": null,
+      "checkin_counter": 0,
+      "checkout_counter": 0,
+      "requests_counter": 0,
+      "user_can_checkout": false,
+      "custom_fields": [],
+      "available_actions": {
+        "checkout": true,
+        "checkin": true,
+        "clone": true,
+        "restore": false,
+        "update": true,
+        "delete": true
+      }
+    }
+  ]
+}

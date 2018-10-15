@@ -14,7 +14,7 @@ load_current_value do |new_resource|
   response = Get.new(endpoint.manufacturers, new_resource.token, new_resource.manufacturer)
 
   begin
-    manufacturer = response.current_record if response.record_exists?
+    manufacturer = response.current_record if response.name_exists?
     manufacturer manufacturer['name']
   rescue
     current_value_does_not_exist!

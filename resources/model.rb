@@ -18,7 +18,7 @@ load_current_value do |new_resource|
   response = Get.new(endpoint.models, new_resource.token, new_resource.model)
 
   begin
-    model = response.current_record if response.record_exists?
+    model = response.current_record if response.name_exists?
     model model['name']
   rescue
     current_value_does_not_exist!
@@ -31,11 +31,11 @@ action :create do
     category_response = Get.new(endpoint.categories, new_resource.token, new_resource.category)
     manufacturer_response = Get.new(endpoint.manufacturers, new_resource.token, new_resource.manufacturer)
     fieldset_response = Get.new(endpoint.fieldsets, new_resource.token, new_resource.fieldset)
-    category = category_response.current_record['id'] if category_response.record_exists?
-    manufacturer = manufacturer_response.current_record['id'] if manufacturer_response.record_exists?
+    category = category_response.current_record['id'] if category_response.name_exists?
+    manufacturer = manufacturer_response.current_record['id'] if manufacturer_response.name_exists?
 
     if property_is_set?(:fieldset)
-      if fieldset_response.record_exists?
+      if fieldset_response.name_exists?
         fieldset = fieldset_response.current_record['id']
       end
     end

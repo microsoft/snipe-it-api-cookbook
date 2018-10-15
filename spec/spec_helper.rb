@@ -25,5 +25,9 @@ shared_context 'converged default recipe', type: :default_recipe do
       .to_return(body: IO.read('./spec/fixtures/manufacturer_response.json'), status: 200)
     stub_request(:get, 'http://fakeymcfakerton.corp.mycompany.com/api/v1/fieldsets')
       .to_return(status: 200)
+    stub_request(:get, 'http://fakeymcfakerton.corp.mycompany.com/api/v1/hardware')
+      .to_return(body: IO.read('./spec/fixtures/hardware_response.json'), status: 200)
+    stub_request(:get, 'http://fakeymcfakerton.corp.mycompany.com/api/v1/statuslabels')
+      .to_return(body: IO.read('./spec/fixtures/statuslabels_response.json'), status: 200)
   end
 end

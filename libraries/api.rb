@@ -11,18 +11,22 @@ module LabCore
         attr_reader :models
         attr_reader :categories
         attr_reader :fieldsets
+        attr_reader :assets
+        attr_reader :status
 
         def initialize(url, token)
           @url = url
           @token = token
-          @manufacturers = snipeit_api(@url, 'manufacturers')
-          @models = snipeit_api(@url, 'models')
-          @categories = snipeit_api(@url, 'categories')
-          @fieldsets = snipeit_api(@url, 'fieldsets')
+          @manufacturers = snipeit_api('manufacturers')
+          @models = snipeit_api('models')
+          @categories = snipeit_api('categories')
+          @fieldsets = snipeit_api('fieldsets')
+          @assets = snipeit_api('hardware')
+          @status = snipeit_api('statuslabels')
         end
 
-        def snipeit_api(url, resource)
-          ::File.join(url, "api/v1/#{resource}")
+        def snipeit_api(resource)
+          ::File.join(@url, "api/v1/#{resource}")
         end
 
         def headers
@@ -49,8 +53,16 @@ module LabCore
           JSON.load(response.body)
         end
 
-        def record_exists?
+        def asset_tag_exists?
+          response['rows'].any? { |m| m['asset_tag'] == @name }
+        end
+
+        def name_exists?
           response['rows'].any? { |m| m['name'] == @name }
+        end
+
+        def current_asset
+          response['rows'].find { |record| record['asset_tag'] == @name }
         end
 
         def current_record

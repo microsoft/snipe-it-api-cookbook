@@ -14,7 +14,7 @@ load_current_value do |new_resource|
   response = Get.new(endpoint.categories, new_resource.token, new_resource.category)
 
   begin
-    category = response.current_record if response.record_exists?
+    category = response.current_record if response.name_exists?
     category category['name']
     category_type category['category_type']
   rescue
