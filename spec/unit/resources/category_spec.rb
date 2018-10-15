@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 shared_examples 'category' do
+  step_into :category
   recipe do
     api_token = node['snipeit']['api']['token']
-
     category 'Desktop - macOS' do
       category_type 'asset'
       token api_token
@@ -16,24 +16,23 @@ shared_examples 'category' do
 end
 
 describe 'lab_core::category' do
-  platform 'mac_os_x'
-  step_into :category
+  url = 'http://fakeymcfakerton.corp.mycompany.com/api/v1/categories'
   include_examples 'category'
   context 'when the category does not exist' do
+    message = {
+      name: 'Desktop - macOS',
+      category_type: 'asset',
+    }
     it {
-      is_expected.to post_http_request('create category[Desktop - macOS]').with(
-        url: 'http://fakeymcfakerton.corp.mycompany.com/api/v1/categories',
-        message: { name: 'Desktop - macOS', category_type: 'asset' }.to_json
-      )
+      is_expected.to post_http_request('create category[Desktop - macOS]')
+        .with(url: url, message: message.to_json)
     }
   end
 
   context 'when the category exists' do
     it {
-      is_expected.to_not post_http_request('create category[Misc Software]').with(
-        url: 'http://fakeymcfakerton.corp.mycompany.com/api/v1/categories',
-        message: { name: 'Misc Software', category_type: 'license' }.to_json
-      )
+      is_expected.to_not post_http_request('create category[Misc Software]')
+        .with(url: url)
     }
   end
 end
