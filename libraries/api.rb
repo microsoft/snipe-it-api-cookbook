@@ -6,27 +6,14 @@ module LabCore
   module SnipeIT
     module API
       class Endpoint
-        attr_reader :url
-        attr_reader :manufacturers
-        attr_reader :models
-        attr_reader :categories
-        attr_reader :fieldsets
-        attr_reader :assets
-        attr_reader :status
-
-        def initialize(url, token)
+        def initialize(url, token, resource)
           @url = url
           @token = token
-          @manufacturers = snipeit_api('manufacturers')
-          @models = snipeit_api('models')
-          @categories = snipeit_api('categories')
-          @fieldsets = snipeit_api('fieldsets')
-          @assets = snipeit_api('hardware')
-          @status = snipeit_api('statuslabels')
+          @resource = resource
         end
 
-        def snipeit_api(resource)
-          ::File.join(@url, "api/v1/#{resource}")
+        def uri
+          ::File.join(@url, "api/v1/#{@resource}")
         end
 
         def headers
@@ -38,13 +25,14 @@ module LabCore
       end
 
       class Get < Net::HTTP::Get
-        def initialize(url, token, name)
-          @url = URI(url)
+        attr_reader :endpoint
+
+        def initialize(url, token, resource, name)
+          @endpoint = Endpoint.new(url, token, resource)
+          @headers = @endpoint.headers
+          @url = URI(@endpoint.uri)
           @name = name
-          super @url, {
-            'Authorization': "Bearer #{token}",
-            'Content-Type': 'application/json',
-          }
+          super @url, @headers
         end
 
         def response
