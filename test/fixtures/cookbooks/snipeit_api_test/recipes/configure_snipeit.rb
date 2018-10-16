@@ -31,3 +31,10 @@ asset '1234567' do
   model 'Mac Pro (Early 2009)'
   token api_token
 end
+
+location 'Building 1' do
+  address '1 Company Lane'
+  city 'San Francisco'
+  state 'CA'
+  zip '94130'
+end
