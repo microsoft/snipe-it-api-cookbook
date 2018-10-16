@@ -15,6 +15,7 @@ shared_examples 'asset' do
       serial_number 'W81123456789'
       status 'Pending'
       model 'Mac Pro (Early 2009)'
+      location 'Building 1'
       token api_token
     end
   end
@@ -36,6 +37,7 @@ describe 'lab_core::asset' do
       serial: 'W81123456789',
       status_id: 1,
       model_id: 4,
+      location_id: 1,
     }
     it {
       is_expected.to post_http_request('create asset[0000000]')

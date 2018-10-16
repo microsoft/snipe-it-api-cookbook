@@ -28,7 +28,6 @@ describe 'lab_core::manufacturer' do
   context 'when the manufacturer does not exist' do
     message = {
       name: 'Dell',
-      url: nil,
     }
     it {
       is_expected.to post_http_request('create manufacturer[Dell]')

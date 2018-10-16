@@ -10,11 +10,10 @@ property :category_type, String, required: true
 default_action :create
 
 load_current_value do |new_resource|
-  categories = Get.new(new_resource.url, new_resource.token, 'categories', new_resource.category)
+  category = Category.new(new_resource.url, new_resource.token, new_resource.category)
   begin
-    category = categories.current_record if categories.name_exists?
-    category category['name']
-    category_type category['category_type']
+    category = category.name if category.exists?
+    category category
   rescue
     current_value_does_not_exist!
   end
@@ -25,12 +24,12 @@ action :create do
     message = {}
     message[:name] = new_resource.category
     message[:category_type] = new_resource.category_type
-    categories = Get.new(new_resource.url, new_resource.token, 'categories', new_resource.category)
+    category = Category.new(new_resource.url, new_resource.token, new_resource.category)
     converge_by("created #{new_resource} in Snipe-IT") do
       http_request "create #{new_resource}" do
-        headers categories.endpoint.headers
+        headers category.headers
         message(message.to_json)
-        url categories.endpoint.uri
+        url category.url
         action :post
       end
     end

@@ -15,10 +15,10 @@ property :currency, String, default: 'USD'
 default_action :create
 
 load_current_value do |new_resource|
-  locations = Get.new(new_resource.url, new_resource.token, 'locations', new_resource.location)
+  location = Location.new(new_resource.url, new_resource.token, new_resource.location)
   begin
-    location = locations.current_record if locations.name_exists?
-    location location['name']
+    location = location.name if location.exists?
+    location location
   rescue
     current_value_does_not_exist!
   end
@@ -33,12 +33,12 @@ action :create do
     message[:country] = new_resource.country
     message[:zip] = new_resource.zip if property_is_set?(:state)
     message[:currency] = new_resource.currency
-    locations = Get.new(new_resource.url, new_resource.token, 'locations', new_resource.location)
+    location = Location.new(new_resource.url, new_resource.token, new_resource.location)
     converge_by("created #{new_resource} in Snipe-IT") do
       http_request "create #{new_resource}" do
-        headers locations.endpoint.headers
+        headers location.headers
         message(message.to_json)
-        url locations.endpoint.uri
+        url location.url
         action :post
       end
     end

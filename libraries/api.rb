@@ -2,64 +2,36 @@ require 'uri'
 require 'net/http'
 require 'json'
 
-module LabCore
-  module SnipeIT
-    module API
-      class Endpoint
-        def initialize(url, token, resource)
-          @url = url
-          @token = token
-          @resource = resource
-        end
-
-        def uri
-          ::File.join(@url, "api/v1/#{@resource}")
-        end
-
-        def headers
-          {
-            'Authorization': "Bearer #{@token}",
-            'Content-Type': 'application/json',
-          }
-        end
+module SnipeIT
+  module API
+    class Get < Net::HTTP::Get
+      def initialize(url, token, resource)
+        @url = url
+        @resource = resource
+        @uri = URI(snipeit_url)
+        @token = token
+        super @uri, headers
       end
 
-      class Get < Net::HTTP::Get
-        attr_reader :endpoint
+      def headers
+        {
+          'Authorization': "Bearer #{@token}",
+          'Content-Type': 'application/json',
+        }
+      end
 
-        def initialize(url, token, resource, name)
-          @endpoint = Endpoint.new(url, token, resource)
-          @headers = @endpoint.headers
-          @url = URI(@endpoint.uri)
-          @name = name
-          super @url, @headers
-        end
+      def snipeit_url
+        ::File.join(@url, "api/v1/#{@resource}")
+      end
 
-        def response
-          request = self
-          response = Net::HTTP.start(@url.host, @url.port) { |http| http.request request }
-          JSON.load(response.body)
-        end
-
-        def asset_tag_exists?
-          response['rows'].any? { |m| m['asset_tag'] == @name }
-        end
-
-        def name_exists?
-          response['rows'].any? { |m| m['name'] == @name }
-        end
-
-        def current_asset
-          response['rows'].find { |record| record['asset_tag'] == @name }
-        end
-
-        def current_record
-          response['rows'].find { |record| record['name'] == @name }
-        end
+      def response
+        request = self
+        response = Net::HTTP.start(@uri.host, @uri.port) { |http| http.request request }
+        JSON.load(response.body)
       end
     end
   end
 end
 
-Chef::Recipe.include LabCore
-Chef::Resource.include LabCore
+Chef::Recipe.include SnipeIT
+Chef::Resource.include SnipeIT

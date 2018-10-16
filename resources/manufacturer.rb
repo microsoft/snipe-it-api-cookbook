@@ -10,12 +10,10 @@ property :website, String
 default_action :create
 
 load_current_value do |new_resource|
-  endpoint = Endpoint.new(new_resource.url, new_resource.token)
-  response = Get.new(endpoint.manufacturers, new_resource.token, new_resource.manufacturer)
-
+  manufacturer = Manufacturer.new(new_resource.url, new_resource.token, new_resource.manufacturer)
   begin
-    manufacturer = response.current_record if response.name_exists?
-    manufacturer manufacturer['name']
+    manufacturer = manufacturer.name if manufacturer.exists?
+    manufacturer manufacturer
   rescue
     current_value_does_not_exist!
   end
@@ -23,16 +21,15 @@ end
 
 action :create do
   converge_if_changed :manufacturer do
-    endpoint = Endpoint.new(new_resource.url, new_resource.token)
-
+    message = {}
+    message[:name] = new_resource.manufacturer
+    message[:url] = new_resource.website if property_is_set?(:website)
+    manufacturer = Manufacturer.new(new_resource.url, new_resource.token, new_resource.manufacturer)
     converge_by("created #{new_resource} in Snipe-IT") do
       http_request "create #{new_resource}" do
-        headers endpoint.headers
-        message({
-          name: new_resource.manufacturer,
-          url: new_resource.website,
-        }.to_json)
-        url endpoint.manufacturers
+        headers manufacturer.headers
+        message message.to_json
+        url manufacturer.url
         action :post
       end
     end
