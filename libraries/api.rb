@@ -4,13 +4,14 @@ require 'json'
 
 module SnipeIT
   module API
-    class Get < Net::HTTP::Get
-      def initialize(url, token, resource)
+    class Endpoint
+      def initialize(url, token)
         @url = url
-        @resource = resource
-        @uri = URI(snipeit_url)
         @token = token
-        super @uri, headers
+      end
+
+      def snipeit_url(resource_type)
+        url = ::File.join(@url, "api/v1/#{resource_type}")
       end
 
       def headers
@@ -19,9 +20,12 @@ module SnipeIT
           'Content-Type': 'application/json',
         }
       end
+    end
 
-      def snipeit_url
-        ::File.join(@url, "api/v1/#{@resource}")
+    class Get < Net::HTTP::Get
+      def initialize(url, headers)
+        @uri = URI(url)
+        super @uri, headers
       end
 
       def response

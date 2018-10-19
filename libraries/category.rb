@@ -4,11 +4,11 @@ class Category
   attr_reader :headers
   attr_reader :url
 
-  def initialize(url, token, category_name)
-    @category = Get.new(url, token, 'categories')
+  def initialize(endpoint, category_name)
     @category_name = category_name
-    @headers = @category.headers
-    @url = @category.snipeit_url
+    @url = endpoint.snipeit_url('categories')
+    @headers = endpoint.headers
+    @category = Get.new(@url, @headers)
   end
 
   def current_value

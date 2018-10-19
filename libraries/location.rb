@@ -4,11 +4,11 @@ class Location
   attr_reader :headers
   attr_reader :url
 
-  def initialize(url, token, location_name)
+  def initialize(endpoint, location_name)
     @location_name = location_name
-    @location = Get.new(url, token, 'locations')
-    @headers = @location.headers
-    @url = @location.snipeit_url
+    @headers = endpoint.headers
+    @url = endpoint.snipeit_url('locations')
+    @location = Get.new(@url, @headers)
   end
 
   def current_value

@@ -4,11 +4,11 @@ class Fieldset
   attr_reader :headers
   attr_reader :models
 
-  def initialize(url, token, fieldset)
+  def initialize(endpoint, fieldset)
     @fieldset = fieldset
-    @fieldsets = Get.new(url, token, 'fieldsets')
-    @headers = @fieldsets.headers
-    @url = @fieldsets.snipeit_url
+    @headers = endpoint.headers
+    @url = endpoint.snipeit_url('fieldsets')
+    @fieldsets = Get.new(@url, @headers)
   end
 
   def current_value

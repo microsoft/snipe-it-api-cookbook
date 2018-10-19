@@ -1,9 +1,9 @@
 include SnipeIT::API
 
 class Status
-  def initialize(url, token, status_label)
+  def initialize(endpoint, status_label)
     @status_label = status_label
-    @status = Get.new(url, token, 'statuslabels')
+    @status = Get.new(endpoint.snipeit_url('statuslabels'), endpoint.headers)
   end
 
   def current_value
