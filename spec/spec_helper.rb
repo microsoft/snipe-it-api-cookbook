@@ -18,6 +18,7 @@ shared_context 'converged default recipe', type: :default_recipe do
 
   default_attributes['snipeit']['api']['instance'] = 'http://fakeymcfakerton.corp.mycompany.com'
   default_attributes['snipeit']['api']['token'] = 'asdjlkhlskjha348298phluasf-.'
+  default_attributes['chef-vault']['databag_fallback'] = true
 
   before do
     url = 'http://fakeymcfakerton.corp.mycompany.com/api/v1'
@@ -36,5 +37,9 @@ shared_context 'converged default recipe', type: :default_recipe do
       .to_return(body: IO.read('./spec/fixtures/statuslabel_response.json'))
     stub_request(:get, "#{url}/locations")
       .to_return(body: IO.read('./spec/fixtures/location_response.json'))
+    stub_data_bag('snipe-it').and_return(['api'])
+    stub_data_bag_item('snipe-it', 'api').and_return({key: 'asdjlkhlskjha348298phluasf-.'})
+
+    allow(Chef::DataBagItem).to receive(:load).and_return({key: 'asdjlkhlskjha348298phluasf-.'})
   end
 end
