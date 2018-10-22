@@ -35,7 +35,7 @@ describe 'lab_core::model' do
       name: 'HAL 9000',
       model_number: 'HAL9000',
       category_id: 3,
-      manufacturer_id: 3
+      manufacturer_id: 3,
     }
 
     it {

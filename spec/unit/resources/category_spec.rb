@@ -22,7 +22,7 @@ describe 'lab_core::category' do
   context 'when the category does not exist' do
     message = {
       name: 'Desktop - macOS',
-      category_type: 'asset'
+      category_type: 'asset',
     }
 
     it {

@@ -34,7 +34,7 @@ describe 'lab_core::asset' do
       serial: 'W81123456789',
       status_id: 1,
       model_id: 4,
-      location_id: 1
+      location_id: 1,
     }
 
     it {

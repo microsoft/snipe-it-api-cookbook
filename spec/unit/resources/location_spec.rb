@@ -43,7 +43,7 @@ describe 'lab_core::location' do
       state: 'WA',
       country: 'US',
       zip: '98052',
-      currency: 'USD'
+      currency: 'USD',
     }
 
     it {
