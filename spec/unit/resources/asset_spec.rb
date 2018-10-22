@@ -24,7 +24,7 @@ describe 'lab_core::asset' do
   context 'when the model exists' do
     it {
       is_expected.to_not post_http_request('create asset[1234567]')
-        .with(url: url)
+        .with(url: url, headers: headers)
     }
   end
 
@@ -34,13 +34,12 @@ describe 'lab_core::asset' do
       serial: 'W81123456789',
       status_id: 1,
       model_id: 4,
-      location_id: 1,
+      location_id: 1
     }
+
     it {
       is_expected.to post_http_request('create asset[0000000]')
-        .with(
-          url: url,
-          message: message.to_json)
+        .with(url: url, message: message.to_json, headers: headers)
     }
   end
 end
