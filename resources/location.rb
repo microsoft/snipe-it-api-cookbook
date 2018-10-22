@@ -3,7 +3,7 @@ include SnipeIT::API
 resource_name :location
 
 property :url, String, default: node['snipeit']['api']['instance']
-property :token, String, required: true
+property :token, String
 property :location, String, name_property: true
 property :address, String
 property :city, String
@@ -14,18 +14,32 @@ property :currency, String, default: 'USD'
 
 default_action :create
 
+def api_token
+  proc { property_is_set?(:token) ? token : chef_vault_item('snipe-it', 'api')['key'] }
+end
+
 load_current_value do |new_resource|
-  location = Location.new(new_resource.url, new_resource.token, new_resource.location)
+  endpoint = Endpoint.new(new_resource.url, api_token.call)
+  location = Location.new(endpoint, new_resource.location)
+
   begin
     location = location.name if location.exists?
     location location
-  rescue
+  rescue StandardError
     current_value_does_not_exist!
+  end
+end
+
+action_class do
+  def endpoint
+    Endpoint.new(new_resource.url, api_token.call)
   end
 end
 
 action :create do
   converge_if_changed :location do
+    location = Location.new(endpoint, new_resource.location)
+
     message = {}
     message[:name] = new_resource.location
     message[:address] = new_resource.address if property_is_set?(:address)
@@ -33,7 +47,7 @@ action :create do
     message[:country] = new_resource.country
     message[:zip] = new_resource.zip if property_is_set?(:state)
     message[:currency] = new_resource.currency
-    location = Location.new(new_resource.url, new_resource.token, new_resource.location)
+
     converge_by("created #{new_resource} in Snipe-IT") do
       http_request "create #{new_resource}" do
         headers location.headers

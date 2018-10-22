@@ -9,27 +9,38 @@ property :purchase_date, String
 property :serial_number, String, required: true
 property :status, String, required: true
 property :supplier, String
-property :token, String, required: true
+property :token, String
 property :url, String, default: node['snipeit']['api']['instance']
 
 default_action :create
 
+def api_token
+  proc { property_is_set?(:token) ? token : chef_vault_item('snipe-it', 'api')['key'] }
+end
+
 load_current_value do |new_resource|
-  asset = Asset.new(new_resource.url, new_resource.token, new_resource.asset_tag)
+  endpoint = Endpoint.new(new_resource.url, api_token.call)
+  asset = Asset.new(endpoint, new_resource.asset_tag)
   begin
     asset = asset.current_value if asset.exists?
     asset_tag asset['asset_tag']
-  rescue
+  rescue StandardError
     current_value_does_not_exist!
+  end
+end
+
+action_class do
+  def endpoint
+    Endpoint.new(new_resource.url, api_token.call)
   end
 end
 
 action :create do
   converge_if_changed :asset_tag do
-    asset = Asset.new(new_resource.url, new_resource.token, new_resource.asset_tag)
-    status = Status.new(new_resource.url, new_resource.token, new_resource.status)
-    model = Model.new(new_resource.url, new_resource.token, new_resource.model)
-    location = Location.new(new_resource.url, new_resource.token, new_resource.location)
+    asset = Asset.new(endpoint, new_resource.asset_tag)
+    status = Status.new(endpoint, new_resource.status)
+    model = Model.new(endpoint, new_resource.model)
+    location = Location.new(endpoint, new_resource.location)
     status_id = status.id if status.exists?
     model_id = model.id if model.exists?
 
