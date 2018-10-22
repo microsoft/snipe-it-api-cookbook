@@ -11,7 +11,7 @@ module SnipeIT
       end
 
       def snipeit_url(resource_type)
-        url = ::File.join(@url, "api/v1/#{resource_type}")
+        ::File.join(@url, "api/v1/#{resource_type}")
       end
 
       def headers
