@@ -3,14 +3,13 @@ require 'spec_helper'
 shared_examples 'manufacturer' do
   step_into :manufacturer
   recipe do
-    api_token = node['snipeit']['api']['token']
-
     manufacturer 'Apple' do
       website 'https://www.apple.com'
-      token api_token
     end
 
-    manufacturer 'Dell'
+    manufacturer 'Dell' do
+      token 'asdjlkhlskjha348298phluasf-.'
+    end
   end
 end
 
