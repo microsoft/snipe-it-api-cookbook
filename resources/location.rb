@@ -15,7 +15,15 @@ property :currency, String, default: 'USD'
 default_action :create
 
 def api_token
-  proc { property_is_set?(:token) ? token : chef_vault_item('snipe-it', 'api')['key'] }
+  proc {
+    if property_is_set?(:token)
+      token
+    elsif node['snipeit']['api']['token']
+      node['snipeit']['api']['token']
+    else
+      chef_vault_item('snipe-it', 'api')['key']
+    end
+  }
 end
 
 load_current_value do |new_resource|

@@ -10,7 +10,15 @@ property :website, String
 default_action :create
 
 def api_token
-  proc { property_is_set?(:token) ? token : chef_vault_item('snipe-it', 'api')['key'] }
+  proc {
+    if property_is_set?(:token)
+      token
+    elsif node['snipeit']['api']['token']
+      node['snipeit']['api']['token']
+    else
+      chef_vault_item('snipe-it', 'api')['key']
+    end
+  }
 end
 
 load_current_value do |new_resource|
@@ -25,21 +33,16 @@ load_current_value do |new_resource|
   end
 end
 
-action_class do
-  def endpoint
-    Endpoint.new(new_resource.url, api_token.call)
-  end
-end
-
 action :create do
   converge_if_changed :manufacturer do
+    endpoint = Endpoint.new(new_resource.url, api_token.call)
     manufacturer = Manufacturer.new(endpoint, new_resource.manufacturer)
 
     message = {}
     message[:name] = new_resource.manufacturer
     message[:url] = new_resource.website if property_is_set?(:website)
 
-    converge_by("created #{new_resource} in Snipe-IT") do
+    converge_by("creating #{new_resource} in Snipe-IT") do
       http_request "create #{new_resource}" do
         headers manufacturer.headers
         message message.to_json
