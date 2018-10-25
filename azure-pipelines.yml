@@ -3,7 +3,7 @@ resources:
   clean: true
 
 queue:
-  name: ApexInfra macOS
+  name: ApexInfra Linux
 
 name: $(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 
@@ -13,6 +13,14 @@ steps:
   inputs:
     chefDKForceInstall: true
     chefDKChannel: stable
+
+- template: pipelines/templates/install-chef-gems.yml
+    parameters:
+        gem: webmock
+
+- template: pipelines/templates/install-chef-gems.yml
+    parameters:
+        gem: chef-vault-testfixtures
 
 - task: chef-software.vsts-chef-tasks.vsts-chef-task-test-kitchen.vsts-chef-task-test-kitchen@1
   displayName: 'Execute Test Kitchen: test'

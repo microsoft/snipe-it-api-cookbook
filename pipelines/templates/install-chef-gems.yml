@@ -1,0 +1,8 @@
+parameters:
+  gem: ''
+
+steps:
+- task: chef-software.vsts-chef-tasks.vsts-chef-task-gem-install.vsts-chef-task-gem-install@1
+  displayName: 'Install Gem: ${{ parameters.gem }}'
+  inputs:
+    gemName: ${{ parameters.gem }}
