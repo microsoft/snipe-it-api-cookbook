@@ -3,7 +3,7 @@ include SnipeIT::API
 resource_name :model
 
 property :url, String, default: node['snipeit']['api']['instance']
-property :token, String
+property :token, String, required: true
 property :model, String, name_property: true
 property :model_number, String
 property :manufacturer, String
@@ -13,20 +13,8 @@ property :fieldset, String
 
 default_action :create
 
-def api_token
-  proc {
-    if property_is_set?(:token)
-      token
-    elsif node['snipeit']['api']['token']
-      node['snipeit']['api']['token']
-    else
-      chef_vault_item('snipe-it', 'api')['key']
-    end
-  }
-end
-
 load_current_value do |new_resource|
-  endpoint = Endpoint.new(new_resource.url, api_token.call)
+  endpoint = Endpoint.new(new_resource.url, new_resource.token)
   model = Model.new(endpoint, new_resource.model)
 
   begin
@@ -39,7 +27,7 @@ end
 
 action :create do
   converge_if_changed :model do
-    endpoint = Endpoint.new(new_resource.url, api_token.call)
+    endpoint = Endpoint.new(new_resource.url, new_resource.token)
     category = Category.new(endpoint, new_resource.category)
     manufacturer = Manufacturer.new(endpoint, new_resource.manufacturer)
     fieldset = Fieldset.new(endpoint, new_resource.fieldset)

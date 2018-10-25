@@ -9,25 +9,13 @@ property :purchase_date, String
 property :serial_number, String, required: true
 property :status, String, required: true
 property :supplier, String
-property :token, String
+property :token, String, required: true
 property :url, String, default: node['snipeit']['api']['instance']
 
 default_action :create
 
-def api_token
-  proc {
-    if property_is_set?(:token)
-      token
-    elsif node['snipeit']['api']['token']
-      node['snipeit']['api']['token']
-    else
-      chef_vault_item('snipe-it', 'api')['key']
-    end
-  }
-end
-
 load_current_value do |new_resource|
-  endpoint = Endpoint.new(new_resource.url, api_token.call)
+  endpoint = Endpoint.new(new_resource.url, new_resource.token)
   asset = Asset.new(endpoint, new_resource.asset_tag)
   begin
     asset = asset.current_value if asset.exists?
@@ -39,7 +27,7 @@ end
 
 action :create do
   converge_if_changed :asset_tag do
-    endpoint = Endpoint.new(new_resource.url, api_token.call)
+    endpoint = Endpoint.new(new_resource.url, new_resource.token)
     asset = Asset.new(endpoint, new_resource.asset_tag)
     status = Status.new(endpoint, new_resource.status)
     model = Model.new(endpoint, new_resource.model)
