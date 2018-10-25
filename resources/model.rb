@@ -37,14 +37,9 @@ load_current_value do |new_resource|
   end
 end
 
-action_class do
-  def endpoint
-    Endpoint.new(new_resource.url, api_token.call)
-  end
-end
-
 action :create do
   converge_if_changed :model do
+    endpoint = Endpoint.new(new_resource.url, api_token.call)
     category = Category.new(endpoint, new_resource.category)
     manufacturer = Manufacturer.new(endpoint, new_resource.manufacturer)
     fieldset = Fieldset.new(endpoint, new_resource.fieldset)

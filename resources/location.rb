@@ -38,14 +38,9 @@ load_current_value do |new_resource|
   end
 end
 
-action_class do
-  def endpoint
-    Endpoint.new(new_resource.url, api_token.call)
-  end
-end
-
 action :create do
   converge_if_changed :location do
+    endpoint = Endpoint.new(new_resource.url, api_token.call)
     location = Location.new(endpoint, new_resource.location)
 
     message = {}

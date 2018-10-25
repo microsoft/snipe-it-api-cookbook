@@ -37,14 +37,9 @@ load_current_value do |new_resource|
   end
 end
 
-action_class do
-  def endpoint
-    Endpoint.new(new_resource.url, api_token.call)
-  end
-end
-
 action :create do
   converge_if_changed :asset_tag do
+    endpoint = Endpoint.new(new_resource.url, api_token.call)
     asset = Asset.new(endpoint, new_resource.asset_tag)
     status = Status.new(endpoint, new_resource.status)
     model = Model.new(endpoint, new_resource.model)
