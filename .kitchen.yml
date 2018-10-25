@@ -33,8 +33,12 @@ platforms:
 - name: macos-10.14
 
 suites:
-  - name: default
-    run_list:
-      - recipe[snipeit_api_test::configure_snipeit]
-    includes:
-      - ubuntu-16.04
+- name: default
+  run_list:
+    - recipe[snipeit_api_test::configure_snipeit]
+  includes:
+    - ubuntu-16.04
+  attributes:
+    snipeit:
+      api:
+        instance: <%= ENV['SNIPEIT_URL'] %>
