@@ -1,6 +1,7 @@
 ---
 driver:
   name: vagrant
+  provider: parallels
 
 provisioner:
   product_name: chef
