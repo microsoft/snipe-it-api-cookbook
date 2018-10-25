@@ -1,4 +1,5 @@
 resources:
+
 - repo: self
   clean: true
 
@@ -7,37 +8,74 @@ queue:
 
 name: $(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 
-steps:
-- task: chef-software.vsts-chef-tasks.vsts-chef-task-install-chefdk.vsts-chef-task-install-chefdk@1
-  displayName: 'Install ChefDK'
-  inputs:
-    chefDKForceInstall: true
-    chefDKChannel: stable
+phases:
+- phase: Phase_1
+  displayName: Chef Linting and Unit Tests
 
-- template: pipelines/templates/install-chef-gems.yml
+  - task: chef-software.vsts-chef-tasks.vsts-chef-task-install-chefdk.vsts-chef-task-install-chefdk@1
+    displayName: 'Install ChefDK (Current)'
+    inputs:
+      chefDKForceInstall: true
+
+  - script: 'chef exec cookstyle  --extra-details --no-color'
+    displayName: Run Chef Cookstyle
+    failOnStderr: true
+
+  - script: 'chef exec foodcritic .'
+    displayName: Run Foodcritic
+    failOnStderr: true
+
+  - script: 'chef exec rspec --no-color --format RspecJunitFormatter --out /tmp/rspec.xml'
+    displayName: Run ChefSpec
+    failOnStderr: true
+
+  - task: PublishTestResults@2
+    inputs:
+        testResultsFormat: JUnit
+        testResultsFiles: /tmp/rspec.xml
+
+- phase: Phase_2
+  displayName: Chef Integration Tests
+  dependsOn: Phase_1
+  condition: succeeded()
+
+  - task: chef-software.vsts-chef-tasks.vsts-chef-task-exec-knife.vsts-chef-task-exec-knife@1
+    displayName: 'Download data bags from the Chef Server'
+    inputs:
+      knifeEndpoint: 'Hephaestus (packer)'
+      knifeArguments: 'download /data_bags --chef-repo-path $(Build.SourcesDirectory)/test/fixtures -u {USERNAME} -s {URL}'
+      knifePrivateKey: true
+
+  - task: chef-software.vsts-chef-tasks.vsts-chef-task-install-chefdk.vsts-chef-task-install-chefdk@1
+    displayName: 'Install ChefDK'
+    inputs:
+      chefDKForceInstall: true
+      chefDKChannel: stable
+
+  - template: pipelines/templates/install-chef-gems.yml
     parameters:
-        gem: webmock
+      gem: webmock
 
-- template: pipelines/templates/install-chef-gems.yml
+  - template: pipelines/templates/install-chef-gems.yml
     parameters:
-        gem: chef-vault-testfixtures
+      gem: chef-vault-testfixtures
 
-- task: chef-software.vsts-chef-tasks.vsts-chef-task-test-kitchen.vsts-chef-task-test-kitchen@1
-  displayName: 'Execute Test Kitchen: test'
-  inputs:
-    tkAzureEndpoint: 'Apex Lab - CorpNet'
-    tkCommand: test
-    tkKitchenFile: .kitchen.yml
+  - task: chef-software.vsts-chef-tasks.vsts-chef-task-test-kitchen.vsts-chef-task-test-kitchen@1
+    displayName: 'Execute Test Kitchen: test'
+    inputs:
+      tkAzureEndpoint: 'Apex Lab - CorpNet'
+      tkCommand: test
+      tkKitchenFile: .kitchen.yml
 
-- task: PublishTestResults@2
-  inputs:
-    testResultsFormat: JUnit
-    testResultsFiles: /tmp/junit.xml
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFormat: JUnit
+      testResultsFiles: /tmp/junit.xml
 
-- task: chef-software.vsts-chef-tasks.vsts-chef-task-test-kitchen.vsts-chef-task-test-kitchen@1
-  displayName: 'Execute Test Kitchen: destroy'
-  inputs:
-    tkAzureEndpoint: 'Apex Lab - CorpNet'
-    tkCommand: destroy
-    tkKitchenFile: .kitchen.yml
-  condition: always()
+  - task: chef-software.vsts-chef-tasks.vsts-chef-task-test-kitchen.vsts-chef-task-test-kitchen@1
+    displayName: 'Execute Test Kitchen: destroy'
+    inputs:
+      tkAzureEndpoint: 'Apex Lab - CorpNet'
+      tkCommand: destroy
+      tkKitchenFile: .kitchen.yml
+    condition: always()
