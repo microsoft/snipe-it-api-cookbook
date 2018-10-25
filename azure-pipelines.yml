@@ -3,7 +3,7 @@ resources:
   clean: true
 
 queue:
-  name: ApexInfra Linux
+  name: ApexInfra macOS
 
 steps:
 - task: chef-software.vsts-chef-tasks.vsts-chef-task-install-chefdk.vsts-chef-task-install-chefdk@1
