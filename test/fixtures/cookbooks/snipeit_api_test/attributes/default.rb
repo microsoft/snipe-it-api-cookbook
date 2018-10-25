@@ -1,1 +1,1 @@
-default['snipeit']['api']['instance'] = "http://ikea<%= ENV['DOMAIN'] %>"
+default['snipeit']['api']['instance'] = "http://ikea#{ENV['DOMAIN']}"
