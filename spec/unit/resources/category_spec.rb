@@ -12,6 +12,7 @@ shared_examples 'category' do
 
     category 'Misc Software' do
       category_type 'license'
+      token api_token
     end
   end
 end

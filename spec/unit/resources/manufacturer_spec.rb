@@ -5,6 +5,7 @@ shared_examples 'manufacturer' do
   recipe do
     manufacturer 'Apple' do
       website 'https://www.apple.com'
+      token 'asdjlkhlskjha348298phluasf-.'
     end
 
     manufacturer 'Dell' do
