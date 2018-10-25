@@ -5,6 +5,8 @@ resources:
 queue:
   name: ApexInfra macOS
 
+name: $(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
+
 steps:
 - task: chef-software.vsts-chef-tasks.vsts-chef-task-install-chefdk.vsts-chef-task-install-chefdk@1
   displayName: 'Install ChefDK'
