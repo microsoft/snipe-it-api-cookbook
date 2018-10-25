@@ -3,11 +3,13 @@ require 'spec_helper'
 shared_examples 'asset' do
   step_into :asset
   recipe do
+    api_token = chef_vault_item('snipe-it', 'api')['key']
+
     asset '1234567' do
       serial_number 'W80123456789'
       status 'Pending'
       model 'Mac Pro (Early 2009)'
-      token chef_vault_item('snipe-it', 'api')['key']
+      token api_token
     end
 
     asset '0000000' do
@@ -15,7 +17,7 @@ shared_examples 'asset' do
       status 'Pending'
       model 'Mac Pro (Early 2009)'
       location 'Building 1'
-      token chef_vault_item('snipe-it', 'api')['key']
+      token api_token
     end
   end
 end
