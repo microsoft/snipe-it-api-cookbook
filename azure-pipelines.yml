@@ -1,0 +1,33 @@
+resources:
+- repo: self
+  clean: true
+  containers:
+  - container: test
+    image: ubuntu:16.04
+
+pool:
+  vmImage: 'ubuntu-16.04'
+
+container: test
+
+steps:
+- task: chef-software.vsts-chef-tasks.vsts-chef-task-install-chefdk.vsts-chef-task-install-chefdk@1
+  displayName: 'Install ChefDK'
+  inputs:
+    chefDKForceInstall: true
+    chefDKChannel: stable
+
+- task: chef-software.vsts-chef-tasks.vsts-chef-task-test-kitchen.vsts-chef-task-test-kitchen@1
+  displayName: 'Execute Test Kitchen: test'
+  inputs:
+    tkAzureEndpoint: 'Apex Lab - CorpNet'
+    tkCommand: test
+    tkKitchenFile: .kitchen.yml
+
+- task: chef-software.vsts-chef-tasks.vsts-chef-task-test-kitchen.vsts-chef-task-test-kitchen@1
+  displayName: 'Execute Test Kitchen: destroy'
+  inputs:
+    tkAzureEndpoint: 'Apex Lab - CorpNet'
+    tkCommand: destroy
+    tkKitchenFile: .kitchen.yml
+  condition: always()
