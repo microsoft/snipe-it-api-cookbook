@@ -21,6 +21,11 @@ steps:
     tkCommand: test
     tkKitchenFile: .kitchen.yml
 
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: JUnit
+    testResultsFiles: /tmp/junit.xml
+
 - task: chef-software.vsts-chef-tasks.vsts-chef-task-test-kitchen.vsts-chef-task-test-kitchen@1
   displayName: 'Execute Test Kitchen: destroy'
   inputs:
