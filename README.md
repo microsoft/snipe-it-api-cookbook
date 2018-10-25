@@ -1,5 +1,7 @@
 # Snipe-IT API Cookbook
 
+[![Build Status](https://dev.azure.com/office/APEX/_apis/build/status/Snipe-IT%20API%20Cookbook)](https://dev.azure.com/office/APEX/_build/latest?definitionId=4257)
+
 Provides Chef Custom Resources for accessing the Snipe-IT REST API.
 
 ## Requirements
@@ -21,7 +23,6 @@ Tested with **Snipe-IT v4.6.4** on **Ubuntu 16.04**.
 
 - `['snipeit']['api']['instance']` - the URL for your Snipe-IT installation. Default is `http://snipe-it.mycompany.com`
 - `['snipeit']['api']['token']` - [JSON Web Token](https://jwt.io/) used to authenticate with the API. See [Generate an API Token](#generate-an-api-token). Default is `nil`.
-
 
 ## Resources
 
@@ -110,10 +111,10 @@ This cookbook expects that you already have a Snipe-IT installation configured, 
 Please reference the [Snipe-IT documentation for the API](https://snipe-it.readme.io/v4.6.3/reference#generating-api-tokens) on how to generate a token.
 
 You can pass the API key to your Chef run with:
- - the `token` property in the resource block
- - setting the `['snipeit']['api']['token']` node attribute
- - creating Chef Vault, or a data bag under `snipe-it/api` with the token value assigned to `key`.
 
+- the `token` property in the resource block
+- setting the `['snipeit']['api']['token']` node attribute
+- creating Chef Vault, or a data bag under `snipe-it/api` with the token value assigned to `key`.
 
 ## Contributing
 
