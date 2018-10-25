@@ -1,14 +1,9 @@
 resources:
 - repo: self
   clean: true
-  containers:
-  - container: test
-    image: ubuntu:16.04
 
-pool:
-  vmImage: 'ubuntu-16.04'
-
-container: test
+queue:
+  name: ApexInfra Linux
 
 steps:
 - task: chef-software.vsts-chef-tasks.vsts-chef-task-install-chefdk.vsts-chef-task-install-chefdk@1
