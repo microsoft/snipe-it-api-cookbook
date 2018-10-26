@@ -46,19 +46,26 @@ jobs:
   condition: succeeded()
   pool:
     name: ApexInfra Linux
-  steps:
-  - task: chef-software.vsts-chef-tasks.vsts-chef-task-exec-knife.vsts-chef-task-exec-knife@1
-    displayName: 'Download data bags from the Chef Server'
-    inputs:
-      knifeEndpoint: 'Hephaestus (packer)'
-      knifeArguments: 'download /data_bags --chef-repo-path $(Build.SourcesDirectory)/test/fixtures -u {USERNAME} -s {URL}'
-      knifePrivateKey: true
 
+  steps:
   - task: chef-software.vsts-chef-tasks.vsts-chef-task-install-chefdk.vsts-chef-task-install-chefdk@1
     displayName: 'Install ChefDK'
     inputs:
       chefDKForceInstall: true
       chefDKChannel: stable
+
+  - script: 'mkdir -p $(Build.SourcesDirectory)/test/fixtures/data_bags/snipe-it'
+    displayName: Create Data Bag directories
+    failOnStderr: true
+
+  - task: AzureCLI@1
+    displayName: 'Azure CLI '
+    inputs:
+      azureSubscription: 'Apex Lab - CorpNet'
+      scriptLocation: inlineScript
+      inlineScript: az keyvault secret download --file api.json --vault-name $(KeyvaultName) --name snipeit-test-api-token
+      workingDirectory: $(Build.SourcesDirectory)/test/fixtures/data_bags/snipe-it
+      failOnStandardError: true
 
   - task: chef-software.vsts-chef-tasks.vsts-chef-task-test-kitchen.vsts-chef-task-test-kitchen@1
     displayName: 'Execute Test Kitchen: test'
