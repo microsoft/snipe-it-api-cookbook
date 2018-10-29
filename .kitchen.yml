@@ -18,6 +18,9 @@ verifier:
     - junit:/tmp/junit.xml
   inspec_tests:
     - test/integration/default
+  attributes:
+    url: <%= ENV['SNIPEIT_URL'] %>
+    api_token: <%= ENV['SNIPEIT_TOKEN'] %>
 
 platforms:
 - name: ubuntu-16.04
@@ -43,3 +46,4 @@ suites:
     snipeit:
       api:
         instance: <%= ENV['SNIPEIT_URL'] %>
+        token: <%= ENV['SNIPEIT_TOKEN'] %>

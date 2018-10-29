@@ -3,7 +3,7 @@ categories = {
   'macOS - Portable' => 'asset',
 }
 
-api_token = chef_vault_item('snipe-it', 'api')['key']
+api_token = node['snipeit']['api']['token']
 
 manufacturer 'Apple' do
   website 'https://www.apple.com'
