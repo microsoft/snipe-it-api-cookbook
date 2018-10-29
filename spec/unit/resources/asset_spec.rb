@@ -3,7 +3,8 @@ require 'spec_helper'
 shared_examples 'asset' do
   step_into :asset
   recipe do
-    api_token = node['snipeit']['api']['token']
+    api_token = chef_vault_item('snipe-it', 'api')['key']
+
     asset '1234567' do
       serial_number 'W80123456789'
       status 'Pending'
@@ -27,7 +28,7 @@ describe 'lab_core::asset' do
   context 'when the model exists' do
     it {
       is_expected.to_not post_http_request('create asset[1234567]')
-        .with(url: url)
+        .with(url: url, headers: headers)
     }
   end
 
@@ -39,11 +40,10 @@ describe 'lab_core::asset' do
       model_id: 4,
       location_id: 1,
     }
+
     it {
       is_expected.to post_http_request('create asset[0000000]')
-        .with(
-          url: url,
-          message: message.to_json)
+        .with(url: url, message: message.to_json, headers: headers)
     }
   end
 end

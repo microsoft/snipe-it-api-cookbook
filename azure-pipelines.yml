@@ -1,0 +1,78 @@
+resources:
+- repo: self
+  clean: true
+
+name: $(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
+
+jobs:
+- job: job_1
+  displayName: Chef Linting and Unit Tests
+  pool:
+    name: ApexInfra Linux
+  steps:
+  - task: chef-software.vsts-chef-tasks.vsts-chef-task-install-chefdk.vsts-chef-task-install-chefdk@1
+    displayName: 'Install ChefDK (Current)'
+    inputs:
+      chefDKForceInstall: true
+
+  - template: pipelines/templates/install-chef-gems.yml
+    parameters:
+      gem: webmock
+
+  - template: pipelines/templates/install-chef-gems.yml
+    parameters:
+      gem: chef-vault-testfixtures
+
+  - script: 'chef exec cookstyle  --extra-details --no-color'
+    displayName: Run Chef Cookstyle
+    failOnStderr: true
+
+  - script: 'chef exec foodcritic .'
+    displayName: Run Foodcritic
+    failOnStderr: true
+
+  - script: 'chef exec rspec --no-color --format RspecJunitFormatter --out /tmp/rspec.xml'
+    displayName: Run ChefSpec
+    failOnStderr: true
+
+  - task: PublishTestResults@2
+    inputs:
+        testResultsFormat: JUnit
+        testResultsFiles: /tmp/rspec.xml
+
+- job: job_2
+  displayName: Chef Integration Tests
+  dependsOn: job_1
+  condition: succeeded()
+  pool:
+    name: ApexInfra Linux
+
+  steps:
+  - script: echo '##vso[task.setvariable variable=SNIPEIT_TOKEN]$(snipeit-test-api-token)'
+    displayName: Set the SNIPEIT_TOKEN variable
+
+  - task: chef-software.vsts-chef-tasks.vsts-chef-task-install-chefdk.vsts-chef-task-install-chefdk@1
+    displayName: 'Install ChefDK'
+    inputs:
+      chefDKForceInstall: true
+      chefDKChannel: stable
+
+  - task: chef-software.vsts-chef-tasks.vsts-chef-task-test-kitchen.vsts-chef-task-test-kitchen@1
+    displayName: 'Execute Test Kitchen: test'
+    inputs:
+      tkAzureEndpoint: 'Apex Lab - CorpNet'
+      tkCommand: test
+      tkKitchenFile: .kitchen.yml
+
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFormat: JUnit
+      testResultsFiles: /tmp/junit.xml
+
+  - task: chef-software.vsts-chef-tasks.vsts-chef-task-test-kitchen.vsts-chef-task-test-kitchen@1
+    displayName: 'Execute Test Kitchen: destroy'
+    inputs:
+      tkAzureEndpoint: 'Apex Lab - CorpNet'
+      tkCommand: destroy
+      tkKitchenFile: .kitchen.yml
+    condition: always()

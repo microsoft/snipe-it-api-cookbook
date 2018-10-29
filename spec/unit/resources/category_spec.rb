@@ -4,6 +4,7 @@ shared_examples 'category' do
   step_into :category
   recipe do
     api_token = node['snipeit']['api']['token']
+
     category 'Desktop - macOS' do
       category_type 'asset'
       token api_token
@@ -24,16 +25,17 @@ describe 'lab_core::category' do
       name: 'Desktop - macOS',
       category_type: 'asset',
     }
+
     it {
       is_expected.to post_http_request('create category[Desktop - macOS]')
-        .with(url: url, message: message.to_json)
+        .with(url: url, message: message.to_json, headers: headers)
     }
   end
 
   context 'when the category exists' do
     it {
       is_expected.to_not post_http_request('create category[Misc Software]')
-        .with(url: url)
+        .with(url: url, headers: headers)
     }
   end
 end

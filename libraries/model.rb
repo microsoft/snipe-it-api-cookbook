@@ -4,11 +4,11 @@ class Model
   attr_reader :headers
   attr_reader :url
 
-  def initialize(url, token, model_name)
+  def initialize(endpoint, model_name)
     @model_name = model_name
-    @model = Get.new(url, token, 'models')
-    @headers = @model.headers
-    @url = @model.snipeit_url
+    @headers = endpoint.headers
+    @url = endpoint.snipeit_url('models')
+    @model = Get.new(@url, @headers)
   end
 
   def current_value

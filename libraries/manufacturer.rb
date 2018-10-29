@@ -4,11 +4,11 @@ class Manufacturer
   attr_reader :headers
   attr_reader :url
 
-  def initialize(url, token, manufacturer_name)
+  def initialize(endpoint, manufacturer_name)
     @manufacturer_name = manufacturer_name
-    @manufacturer = Get.new(url, token, 'manufacturers')
-    @headers = @manufacturer.headers
-    @url = @manufacturer.snipeit_url
+    @headers = endpoint.headers
+    @url = endpoint.snipeit_url('manufacturers')
+    @manufacturer = Get.new(@url, @headers)
   end
 
   def current_value

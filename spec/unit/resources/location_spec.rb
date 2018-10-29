@@ -26,11 +26,13 @@ end
 
 describe 'lab_core::location' do
   url = 'http://fakeymcfakerton.corp.mycompany.com/api/v1/locations'
+
   include_examples 'location'
+
   context 'when the model exists' do
     it {
       is_expected.to_not post_http_request('create location[Building 1]')
-        .with(url: url)
+        .with(url: url, headers: headers)
     }
   end
 
@@ -43,9 +45,10 @@ describe 'lab_core::location' do
       zip: '98052',
       currency: 'USD',
     }
+
     it {
       is_expected.to post_http_request('create location[Building 2]')
-        .with(url: url, message: message.to_json)
+        .with(url: url, message: message.to_json, headers: headers)
     }
   end
 end

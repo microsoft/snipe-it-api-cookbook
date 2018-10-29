@@ -3,14 +3,13 @@ require 'spec_helper'
 shared_examples 'manufacturer' do
   step_into :manufacturer
   recipe do
-    api_token = node['snipeit']['api']['token']
     manufacturer 'Apple' do
       website 'https://www.apple.com'
-      token api_token
+      token 'asdjlkhlskjha348298phluasf-.'
     end
 
     manufacturer 'Dell' do
-      token api_token
+      token 'asdjlkhlskjha348298phluasf-.'
     end
   end
 end
@@ -21,7 +20,7 @@ describe 'lab_core::manufacturer' do
   context 'when the manufacturer exists' do
     it {
       is_expected.to_not post_http_request('create manufacturer[Apple]')
-        .with(url: url)
+        .with(url: url, headers: headers)
     }
   end
 
@@ -31,7 +30,7 @@ describe 'lab_core::manufacturer' do
     }
     it {
       is_expected.to post_http_request('create manufacturer[Dell]')
-        .with(url: url, message: message.to_json)
+        .with(url: url, message: message.to_json, headers: headers)
     }
   end
 end

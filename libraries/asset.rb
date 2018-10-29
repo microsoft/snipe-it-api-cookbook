@@ -4,11 +4,11 @@ class Asset
   attr_reader :headers
   attr_reader :url
 
-  def initialize(url, token, asset_tag)
+  def initialize(endpoint, asset_tag)
     @asset_tag = asset_tag
-    @asset = Get.new(url, token, 'hardware')
-    @headers = @asset.headers
-    @url = @asset.snipeit_url
+    @headers = endpoint.headers
+    @url = endpoint.snipeit_url('hardware')
+    @asset = Get.new(@url, @headers)
   end
 
   def current_value

@@ -14,35 +14,24 @@ property :fieldset, String
 default_action :create
 
 load_current_value do |new_resource|
-  model = Model.new(new_resource.url, new_resource.token, new_resource.model)
+  endpoint = Endpoint.new(new_resource.url, new_resource.token)
+  model = Model.new(endpoint, new_resource.model)
+
   begin
     model = model.name if model.exists?
     model model
-  rescue
+  rescue StandardError
     current_value_does_not_exist!
   end
 end
 
 action :create do
   converge_if_changed :model do
-    category =
-      Category.new(
-        new_resource.url,
-        new_resource.token,
-        new_resource.category
-      )
-    manufacturer =
-      Manufacturer.new(
-        new_resource.url,
-        new_resource.token,
-        new_resource.manufacturer
-      )
-    fieldset =
-      Fieldset.new(
-        new_resource.url,
-        new_resource.token,
-        new_resource.fieldset
-      )
+    endpoint = Endpoint.new(new_resource.url, new_resource.token)
+    category = Category.new(endpoint, new_resource.category)
+    manufacturer = Manufacturer.new(endpoint, new_resource.manufacturer)
+    fieldset = Fieldset.new(endpoint, new_resource.fieldset)
+    model = Model.new(endpoint, new_resource.model)
 
     message = {}
     message[:name] = new_resource.model
@@ -51,7 +40,7 @@ action :create do
     message[:manufacturer_id] = manufacturer.id if manufacturer.exists?
     message[:eol] = new_resource.eol if property_is_set?(:eol)
     message[:fieldset_id] = fieldset_id if property_is_set?(:fieldset) && fieldset.exists?
-    model = Model.new(new_resource.url, new_resource.token, new_resource.model)
+
     converge_by("creating #{new_resource} in Snipe-IT") do
       http_request "create #{new_resource}" do
         headers model.headers

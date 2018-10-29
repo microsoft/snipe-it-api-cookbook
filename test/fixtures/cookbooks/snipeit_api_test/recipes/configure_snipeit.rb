@@ -1,20 +1,19 @@
-api_token = chef_vault_item('snipeit', 'api')['key']
-
 categories = {
   'macOS - Desktop' => 'asset',
   'macOS - Portable' => 'asset',
 }
 
+api_token = node['snipeit']['api']['token']
+
 manufacturer 'Apple' do
   website 'https://www.apple.com'
   token api_token
-  action :create
 end
 
 categories.each do |name, type|
   category name do
-    token api_token
     category_type type
+    token api_token
   end
 end
 
@@ -37,4 +36,5 @@ location 'Building 1' do
   city 'San Francisco'
   state 'CA'
   zip '94130'
+  token api_token
 end
