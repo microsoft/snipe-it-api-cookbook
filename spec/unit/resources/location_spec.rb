@@ -4,6 +4,8 @@ shared_examples 'location' do
   step_into :location
   recipe do
     api_token = node['snipeit']['api']['token']
+    url = node['snipeit']['api']['instance']
+
     location 'Building 1' do
       address '16011 NE 36th Way'
       city 'Redmond'
@@ -11,6 +13,7 @@ shared_examples 'location' do
       zip '98052'
       currency 'USD'
       token api_token
+      url url
     end
 
     location 'Building 2' do
@@ -20,6 +23,7 @@ shared_examples 'location' do
       zip '98052'
       currency 'USD'
       token api_token
+      url url
     end
   end
 end

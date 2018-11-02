@@ -4,16 +4,19 @@ categories = {
 }
 
 api_token = node['snipeit']['api']['token']
+url = node['snipeit']['api']['instance']
 
 manufacturer 'Apple' do
   website 'https://www.apple.com'
   token api_token
+  url url
 end
 
 categories.each do |name, type|
   category name do
     category_type type
     token api_token
+    url url
   end
 end
 
@@ -22,6 +25,7 @@ model 'Mac Pro (Early 2009)' do
   category 'macOS - Desktop'
   model_number 'MacPro4,1'
   token api_token
+  url url
 end
 
 asset '1234567' do
@@ -29,6 +33,7 @@ asset '1234567' do
   status 'Pending'
   model 'Mac Pro (Early 2009)'
   token api_token
+  url url
 end
 
 location 'Building 1' do
@@ -37,4 +42,5 @@ location 'Building 1' do
   state 'CA'
   zip '94130'
   token api_token
+  url url
 end

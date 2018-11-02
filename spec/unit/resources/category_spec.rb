@@ -4,15 +4,18 @@ shared_examples 'category' do
   step_into :category
   recipe do
     api_token = node['snipeit']['api']['token']
+    url = 'http://fakeymcfakerton.corp.mycompany.com'
 
     category 'Desktop - macOS' do
       category_type 'asset'
       token api_token
+      url url
     end
 
     category 'Misc Software' do
       category_type 'license'
       token api_token
+      url url
     end
   end
 end

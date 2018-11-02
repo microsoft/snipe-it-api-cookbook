@@ -30,8 +30,8 @@ Tested with **Snipe-IT v4.6.4** on **Ubuntu 16.04**.
 
 These properties are available in all resources:
 
-- `:token`, String
-- `:url`, String, default: `node['snipeit']['api']['instance']`
+- `:token`, String, required: true
+- `:url`, String, required: true
 
 ### `asset`
 

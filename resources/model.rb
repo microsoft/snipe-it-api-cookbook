@@ -2,7 +2,7 @@ include SnipeIT::API
 
 resource_name :model
 
-property :url, String, default: node['snipeit']['api']['instance']
+property :url, String, required: true
 property :token, String, required: true
 property :model, String, name_property: true
 property :model_number, String
