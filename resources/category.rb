@@ -2,7 +2,7 @@ include SnipeIT::API
 
 resource_name :category
 
-property :url, String, default: node['snipeit']['api']['instance']
+property :url, String, required: true
 property :token, String, required: true
 property :category, String, name_property: true
 property :category_type, String, required: true

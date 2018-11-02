@@ -10,7 +10,7 @@ property :serial_number, String, required: true
 property :status, String, required: true
 property :supplier, String
 property :token, String, required: true
-property :url, String, default: node['snipeit']['api']['instance']
+property :url, String, required: true
 
 default_action :create
 
