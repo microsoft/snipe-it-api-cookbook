@@ -6,10 +6,12 @@ shared_examples 'manufacturer' do
     manufacturer 'Apple' do
       website 'https://www.apple.com'
       token 'asdjlkhlskjha348298phluasf-.'
+      url 'http://fakeymcfakerton.corp.mycompany.com'
     end
 
     manufacturer 'Dell' do
       token 'asdjlkhlskjha348298phluasf-.'
+      url 'http://fakeymcfakerton.corp.mycompany.com'
     end
   end
 end

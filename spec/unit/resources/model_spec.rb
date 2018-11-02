@@ -4,12 +4,14 @@ shared_examples 'model' do
   step_into :model
   recipe do
     api_token = node['snipeit']['api']['token']
+    url = node['snipeit']['api']['instance']
 
     model 'Mac Pro (Early 2009)' do
       manufacturer 'Apple'
       category 'macOS - Desktop'
       model_number 'MacPro4,1'
       token api_token
+      url url
     end
 
     model 'HAL 9000' do
@@ -17,6 +19,7 @@ shared_examples 'model' do
       category 'Windows - Desktop'
       model_number 'HAL9000'
       token api_token
+      url url
     end
   end
 end
