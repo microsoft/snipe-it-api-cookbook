@@ -21,6 +21,8 @@ class Location
 
   def id
     current_value['id']
+  rescue
+    raise "Record for #{@location_name} location does not exist."
   end
 
   def exists?
