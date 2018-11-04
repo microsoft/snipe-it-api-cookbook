@@ -18,6 +18,8 @@ class Status
 
   def id
     current_value['id']
+  rescue
+    raise "#{@status_label} status does not exist."
   end
 
   def exists?

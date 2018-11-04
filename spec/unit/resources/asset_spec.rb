@@ -21,7 +21,6 @@ describe 'lab_core::asset' do
     recipe do
       asset '0000000' do
         serial_number 'W81123456789'
-        status 'Pending'
         model 'Mac Pro (Early 2009)'
         location 'Building 1'
         token chef_vault_item('snipe-it', 'api')['key']
@@ -61,6 +60,23 @@ describe 'lab_core::asset' do
 
     it 'raises an exception' do
       expect { chef_run }.to raise_error(RuntimeError, /Building 42 location does not exist./)
+    end
+  end
+
+  context 'when the status label does not exist' do
+    recipe do
+      asset '1' do
+        serial_number 'C0123456789'
+        status 'Recycled'
+        model 'Mac Pro (Early 2009)'
+        location 'Building 1'
+        token node['snipeit']['api']['token']
+        url node['snipeit']['api']['instance']
+      end
+    end
+
+    it 'raises an exception' do
+      expect { chef_run }.to raise_error(RuntimeError, /Recycled status does not exist./)
     end
   end
 end

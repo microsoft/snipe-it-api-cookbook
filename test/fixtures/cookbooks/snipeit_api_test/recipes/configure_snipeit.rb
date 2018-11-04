@@ -30,7 +30,6 @@ end
 
 asset '1234567' do
   serial_number 'HALAEK123123'
-  status 'Pending'
   model 'Mac Pro (Early 2009)'
   token api_token
   url url
