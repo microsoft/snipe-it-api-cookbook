@@ -6,6 +6,9 @@ class Status
     @status = Get.new(endpoint.snipeit_url('statuslabels'), endpoint.headers)
   end
 
+  class DoesNotExistError < StandardError
+  end
+
   def current_value
     @status.response['rows'].find do |status|
       status['name'] == @status_label
@@ -18,8 +21,8 @@ class Status
 
   def id
     current_value['id']
-  rescue
-    raise "#{@status_label} status does not exist."
+  rescue NoMethodError
+    raise Status::DoesNotExistError, "#{@status_label} status does not exist in the database!"
   end
 
   def exists?

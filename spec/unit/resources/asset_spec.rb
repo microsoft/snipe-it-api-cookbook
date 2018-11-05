@@ -59,7 +59,7 @@ describe 'lab_core::asset' do
     end
 
     it 'raises an exception' do
-      expect { chef_run }.to raise_error(RuntimeError, /Building 42 location does not exist./)
+      expect { chef_run }.to raise_error(Location::DoesNotExistError)
     end
   end
 
@@ -76,7 +76,7 @@ describe 'lab_core::asset' do
     end
 
     it 'raises an exception' do
-      expect { chef_run }.to raise_error(RuntimeError, /Recycled status does not exist./)
+      expect { chef_run }.to raise_error(Status::DoesNotExistError)
     end
   end
 end
