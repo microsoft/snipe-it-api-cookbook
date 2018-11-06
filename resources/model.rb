@@ -15,10 +15,10 @@ default_action :create
 
 load_current_value do |new_resource|
   endpoint = Endpoint.new(new_resource.url, new_resource.token)
-  model = Model.new(endpoint, new_resource.model)
+  model = Model.new(endpoint, new_resource.model_number)
 
   begin
-    model = model.name if model.exists?
+    model_number model.number
     model model
   rescue StandardError
     current_value_does_not_exist!
