@@ -11,6 +11,9 @@ class Manufacturer
     @manufacturer = Get.new(@url, @headers)
   end
 
+  class DoesNotExistError < StandardError
+  end
+
   def current_value
     @manufacturer.response['rows'].find do |manufacturer|
       manufacturer['name'] == @manufacturer_name
@@ -23,11 +26,7 @@ class Manufacturer
 
   def id
     current_value['id']
-  end
-
-  def exists?
-    @manufacturer.response['rows'].any? do |manufacturer|
-      manufacturer['name'] == @manufacturer_name
-    end
+  rescue NoMethodError
+    raise Manufacturer::DoesNotExistError, "#{@manufacturer_name} does not exist in the database!"
   end
 end
