@@ -17,9 +17,7 @@ class Asset
     end
   end
 
-  def exists?
-    @asset.response['rows'].any? do |asset|
-      asset['asset_tag'] == @asset_tag
-    end
+  def tag
+    current_value['asset_tag']
   end
 end
