@@ -27,8 +27,4 @@ class Location
   rescue NoMethodError
     raise Location::DoesNotExistError, "#{@location_name} does not exist in the database!"
   end
-
-  def exists?
-    @location.response['rows'].any? { |location| location['name'] == @location_name }
-  end
 end
