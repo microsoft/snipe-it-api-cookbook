@@ -14,8 +14,7 @@ load_current_value do |new_resource|
   manufacturer = Manufacturer.new(endpoint, new_resource.manufacturer)
 
   begin
-    manufacturer = manufacturer.name if manufacturer.exists?
-    manufacturer manufacturer
+    manufacturer manufacturer.name
   rescue StandardError
     current_value_does_not_exist!
   end

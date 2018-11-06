@@ -18,8 +18,7 @@ load_current_value do |new_resource|
   endpoint = Endpoint.new(new_resource.url, new_resource.token)
   asset = Asset.new(endpoint, new_resource.asset_tag)
   begin
-    asset = asset.current_value if asset.exists?
-    asset_tag asset['asset_tag']
+    asset_tag asset.tag
   rescue StandardError
     current_value_does_not_exist!
   end
@@ -32,13 +31,12 @@ action :create do
     status = Status.new(endpoint, new_resource.status)
     model = Model.new(endpoint, new_resource.model)
     location = Location.new(endpoint, new_resource.location)
-    model_id = model.id if model.exists?
 
     message = {}
     message[:asset_tag] = new_resource.asset_tag
     message[:serial] = new_resource.serial_number
     message[:status_id] = status.id
-    message[:model_id] = model_id
+    message[:model_id] = model.id
     message[:location_id] = location.id if property_is_set?(:location)
     message[:purchase_date] = new_resource.purchase_date if property_is_set?(:purchase_date)
     message[:supplier] = new_resource.supplier if property_is_set?(:supplier)

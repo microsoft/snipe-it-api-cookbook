@@ -35,10 +35,10 @@ action :create do
     message = {}
     message[:name] = new_resource.model
     message[:model_number] = new_resource.model_number
-    message[:category_id] = category.id if category.exists?
-    message[:manufacturer_id] = manufacturer.id if manufacturer.exists?
+    message[:category_id] = category.id
+    message[:manufacturer_id] = manufacturer.id
     message[:eol] = new_resource.eol if property_is_set?(:eol)
-    message[:fieldset_id] = fieldset_id if property_is_set?(:fieldset) && fieldset.exists?
+    message[:fieldset_id] = fieldset.id if property_is_set?(:fieldset)
 
     converge_by("creating #{new_resource} in Snipe-IT") do
       http_request "create #{new_resource}" do
