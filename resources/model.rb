@@ -5,7 +5,7 @@ resource_name :model
 property :url, String, required: true
 property :token, String, required: true
 property :model, String, name_property: true
-property :model_number, String
+property :model_number, String, required: true
 property :manufacturer, String
 property :category, String
 property :eol, Integer
