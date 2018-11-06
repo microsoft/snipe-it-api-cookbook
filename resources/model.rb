@@ -19,14 +19,13 @@ load_current_value do |new_resource|
 
   begin
     model_number model.number
-    model model
   rescue StandardError
     current_value_does_not_exist!
   end
 end
 
 action :create do
-  converge_if_changed :model do
+  converge_if_changed :model_number do
     endpoint = Endpoint.new(new_resource.url, new_resource.token)
     category = Category.new(endpoint, new_resource.category)
     manufacturer = Manufacturer.new(endpoint, new_resource.manufacturer)
@@ -35,7 +34,7 @@ action :create do
 
     message = {}
     message[:name] = new_resource.model
-    message[:model_number] = new_resource.model_number if property_is_set?(:model_number)
+    message[:model_number] = new_resource.model_number
     message[:category_id] = category.id if category.exists?
     message[:manufacturer_id] = manufacturer.id if manufacturer.exists?
     message[:eol] = new_resource.eol if property_is_set?(:eol)
