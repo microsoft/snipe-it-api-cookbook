@@ -42,12 +42,12 @@ control 'locations' do
   impact 0.7
   title 'Create locations'
   describe json(content: locations.body) do
-    its(['rows', 0, 'name']) { should eq 'Building 1' }
-    its(['rows', 0, 'address']) { should eq '1 Company Lane' }
-    its(['rows', 0, 'city']) { should eq 'San Francisco' }
-    its(['rows', 0, 'state']) { should eq 'CA' }
-    its(['rows', 0, 'country']) { should eq 'US' }
-    its(['rows', 0, 'zip']) { should eq '94130' }
+    its(['rows', 1, 'name']) { should eq 'Building 1' }
+    its(['rows', 1, 'address']) { should eq '1 Company Lane' }
+    its(['rows', 1, 'city']) { should eq 'San Francisco' }
+    its(['rows', 1, 'state']) { should eq 'CA' }
+    its(['rows', 1, 'country']) { should eq 'US' }
+    its(['rows', 1, 'zip']) { should eq '94130' }
   end
 end
 

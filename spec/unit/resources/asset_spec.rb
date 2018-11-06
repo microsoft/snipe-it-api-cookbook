@@ -1,41 +1,33 @@
 require 'spec_helper'
 
-shared_examples 'asset' do
-  step_into :asset
-  recipe do
-    api_token = chef_vault_item('snipe-it', 'api')['key']
-    url = node['snipeit']['api']['instance']
-
-    asset '1234567' do
-      serial_number 'W80123456789'
-      status 'Pending'
-      model 'Mac Pro (Early 2009)'
-      token api_token
-      url url
-    end
-
-    asset '0000000' do
-      serial_number 'W81123456789'
-      status 'Pending'
-      model 'Mac Pro (Early 2009)'
-      location 'Building 1'
-      token api_token
-      url url
-    end
-  end
-end
-
 describe 'lab_core::asset' do
-  url = 'http://fakeymcfakerton.corp.mycompany.com/api/v1/hardware'
-  include_examples 'asset'
-  context 'when the model exists' do
-    it {
-      is_expected.to_not post_http_request('create asset[1234567]')
-        .with(url: url, headers: headers)
-    }
+  step_into :asset
+
+  context 'when the asset exists' do
+    recipe do
+      asset '1234567' do
+        serial_number 'W80123456789'
+        status 'Pending'
+        model 'Mac Pro (Early 2009)'
+        token chef_vault_item('snipe-it', 'api')['key']
+        url node['snipeit']['api']['instance']
+      end
+    end
+
+    it { is_expected.to_not post_http_request('create asset[1234567]') }
   end
 
-  context 'when the model does not exist' do
+  context 'when the asset does not exist' do
+    recipe do
+      asset '0000000' do
+        serial_number 'W81123456789'
+        model 'Mac Pro (Early 2009)'
+        location 'Building 1'
+        token chef_vault_item('snipe-it', 'api')['key']
+        url node['snipeit']['api']['instance']
+      end
+    end
+
     message = {
       asset_tag: '0000000',
       serial: 'W81123456789',
@@ -46,7 +38,45 @@ describe 'lab_core::asset' do
 
     it {
       is_expected.to post_http_request('create asset[0000000]')
-        .with(url: url, message: message.to_json, headers: headers)
+        .with(
+          url: 'http://fakeymcfakerton.corp.mycompany.com/api/v1/hardware',
+          message: message.to_json,
+          headers: headers
+        )
     }
+  end
+
+  context 'when the location does not exist' do
+    recipe do
+      asset '1' do
+        serial_number 'C0123456789'
+        status 'Pending'
+        model 'Mac Pro (Early 2009)'
+        location 'Building 42'
+        token node['snipeit']['api']['token']
+        url node['snipeit']['api']['instance']
+      end
+    end
+
+    it 'raises an exception' do
+      expect { chef_run }.to raise_error(Location::DoesNotExistError)
+    end
+  end
+
+  context 'when the status label does not exist' do
+    recipe do
+      asset '1' do
+        serial_number 'C0123456789'
+        status 'Recycled'
+        model 'Mac Pro (Early 2009)'
+        location 'Building 1'
+        token node['snipeit']['api']['token']
+        url node['snipeit']['api']['instance']
+      end
+    end
+
+    it 'raises an exception' do
+      expect { chef_run }.to raise_error(Status::DoesNotExistError)
+    end
   end
 end
