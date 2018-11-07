@@ -53,3 +53,16 @@ action :create do
     end
   end
 end
+
+action :delete do
+  endpoint = Endpoint.new(new_resource.url, new_resource.token)
+  asset = Asset.new(endpoint, new_resource.asset_tag)
+
+  converge_by("deleting #{new_resource} in Snipe-IT") do
+    http_request "delete #{new_resource}" do
+      headers asset.headers
+      url ::File.join(asset.url, asset.id.to_s)
+      action :delete
+    end
+  end
+end
