@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'lab_core::model' do
+describe 'snipeit_api::model' do
   step_into :model
   context 'when the model does exist' do
     recipe do

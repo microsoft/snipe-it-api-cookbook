@@ -20,7 +20,7 @@ shared_examples 'category' do
   end
 end
 
-describe 'lab_core::category' do
+describe 'snipeit_api::category' do
   url = 'http://fakeymcfakerton.corp.mycompany.com/api/v1/categories'
   include_examples 'category'
   context 'when the category does not exist' do

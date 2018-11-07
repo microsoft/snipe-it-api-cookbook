@@ -1,11 +1,12 @@
 require 'spec_helper'
 
-describe 'lab_core::asset' do
+describe 'snipeit_api::asset - create action' do
   step_into :asset
 
   context 'when the asset exists' do
     recipe do
-      asset '1234567' do
+      asset 'asset exists' do
+        machine_name 'Magic-Machine'
         serial_number 'W80123456789'
         status 'Pending'
         model 'MacPro4,1'
@@ -19,7 +20,9 @@ describe 'lab_core::asset' do
 
   context 'when the asset does not exist' do
     recipe do
-      asset '0000000' do
+      asset 'create a machine' do
+        machine_name 'Does Not Exist'
+        asset_tag '0000000'
         serial_number 'W81123456789'
         model 'MacPro4,1'
         location 'Building 1'
@@ -29,6 +32,7 @@ describe 'lab_core::asset' do
     end
 
     message = {
+      name: 'Does Not Exist',
       asset_tag: '0000000',
       serial: 'W81123456789',
       status_id: 1,
@@ -37,7 +41,7 @@ describe 'lab_core::asset' do
     }
 
     it {
-      is_expected.to post_http_request('create asset[0000000]')
+      is_expected.to post_http_request('create asset[create a machine]')
         .with(
           url: 'http://fakeymcfakerton.corp.mycompany.com/api/v1/hardware',
           message: message.to_json,
@@ -48,7 +52,8 @@ describe 'lab_core::asset' do
 
   context 'when the location does not exist' do
     recipe do
-      asset '1' do
+      asset 'creating asset' do
+        machine_name 'Does Not Exist'
         serial_number 'C0123456789'
         status 'Pending'
         model 'MacPro4,1'
@@ -65,7 +70,8 @@ describe 'lab_core::asset' do
 
   context 'when the status label, and model does not exist in the database' do
     recipe do
-      asset '1' do
+      asset 'creating asset' do
+        machine_name 'Does Not Exist'
         serial_number 'C0123456789'
         status 'Recycled'
         model 'MacPro4,1'
@@ -82,7 +88,8 @@ describe 'lab_core::asset' do
 
   context 'when the model does not exist' do
     recipe do
-      asset '1' do
+      asset 'creating asset' do
+        machine_name 'Does Not Exist'
         serial_number 'C0123456789'
         status 'Pending'
         model 'MacPro6,1'

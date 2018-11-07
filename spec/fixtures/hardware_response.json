@@ -3,7 +3,7 @@
   "rows": [
     {
       "id": 1,
-      "name": "",
+      "name": "Magic-Machine",
       "asset_tag": "1234567",
       "serial": "W80123456789",
       "model": {

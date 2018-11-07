@@ -16,7 +16,7 @@ shared_examples 'manufacturer' do
   end
 end
 
-describe 'lab_core::manufacturer' do
+describe 'snipeit_api::manufacturer' do
   url = 'http://fakeymcfakerton.corp.mycompany.com/api/v1/manufacturers'
   include_examples 'manufacturer'
   context 'when the manufacturer exists' do

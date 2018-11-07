@@ -28,7 +28,7 @@ shared_examples 'location' do
   end
 end
 
-describe 'lab_core::location' do
+describe 'snipeit_api::location' do
   url = 'http://fakeymcfakerton.corp.mycompany.com/api/v1/locations'
 
   include_examples 'location'
