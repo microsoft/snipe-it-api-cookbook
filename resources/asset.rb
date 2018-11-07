@@ -37,7 +37,7 @@ action :create do
     message[:serial] = new_resource.serial_number
     message[:status_id] = status.id
     message[:model_id] = model.id
-    message[:location_id] = location.id if property_is_set?(:location)
+    message[:rtd_location_id] = location.id
     message[:purchase_date] = new_resource.purchase_date if property_is_set?(:purchase_date)
     message[:supplier] = new_resource.supplier if property_is_set?(:supplier)
 
