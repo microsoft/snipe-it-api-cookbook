@@ -39,3 +39,16 @@ action :create do
     end
   end
 end
+
+action :delete do
+  endpoint = Endpoint.new(new_resource.url, new_resource.token)
+  manufacturer = Manufacturer.new(endpoint, new_resource.manufacturer)
+
+  converge_by("delete #{new_resource.manufacturer} from Snipe-IT") do
+    http_request "delete #{new_resource.manufacturer}" do
+      headers manufacturer.headers
+      url ::File.join(manufacturer.url, manufacturer.id.to_s)
+      action :delete
+    end
+  end
+end
