@@ -32,18 +32,18 @@ describe 'snipeit_api::asset - create action' do
     end
 
     message = {
+      rtd_location_id: 1,
       name: 'Does Not Exist',
       asset_tag: '0000000',
       serial: 'W81123456789',
       status_id: 1,
       model_id: 4,
-      rtd_location_id: 1,
     }
 
     it {
-      is_expected.to post_http_request('create asset[create a machine]')
+      is_expected.to post_http_request('create Does Not Exist')
         .with(
-          url: 'http://fakeymcfakerton.corp.mycompany.com/api/v1/hardware',
+          url: hardware_endpoint,
           message: message.to_json,
           headers: headers
         )

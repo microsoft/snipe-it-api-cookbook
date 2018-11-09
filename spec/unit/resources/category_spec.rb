@@ -1,44 +1,36 @@
 require 'spec_helper'
 
-shared_examples 'category' do
-  step_into :category
-  recipe do
-    api_token = node['snipeit']['api']['token']
-    url = 'http://fakeymcfakerton.corp.mycompany.com'
-
-    category 'Desktop - macOS' do
-      category_type 'asset'
-      token api_token
-      url url
-    end
-
-    category 'Misc Software' do
-      category_type 'license'
-      token api_token
-      url url
-    end
-  end
-end
-
 describe 'snipeit_api::category' do
-  url = 'http://fakeymcfakerton.corp.mycompany.com/api/v1/categories'
-  include_examples 'category'
+  step_into :category
   context 'when the category does not exist' do
-    message = {
-      name: 'Desktop - macOS',
-      category_type: 'asset',
-    }
+    recipe do
+      category 'Desktop - macOS' do
+        category_type 'asset'
+        token node['snipeit']['api']['token']
+        url node['snipeit']['api']['instance']
+      end
+    end
 
     it {
       is_expected.to post_http_request('create category[Desktop - macOS]')
-        .with(url: url, message: message.to_json, headers: headers)
+        .with(
+          url: category_endpoint,
+          message: {
+            name: 'Desktop - macOS',
+            category_type: 'asset',
+          }.to_json,
+          headers: headers)
     }
   end
 
   context 'when the category exists' do
-    it {
-      is_expected.to_not post_http_request('create category[Misc Software]')
-        .with(url: url, headers: headers)
-    }
+    recipe do
+      category 'Misc Software' do
+        category_type 'license'
+        token node['snipeit']['api']['token']
+        url node['snipeit']['api']['instance']
+      end
+    end
+    it { is_expected.to_not post_http_request('create category[Misc Software]') }
   end
 end

@@ -12,7 +12,13 @@ describe 'snipeit_api::manufacturer - delete action' do
       end
     end
 
-    it { is_expected.to delete_http_request('delete Apple') }
+    it {
+      is_expected.to delete_http_request('delete Apple')
+        .with(
+          url: "#{manufacturer_endpoint}/4",
+          headers: headers
+        )
+    }
   end
 
   context 'when the manufacturer does not exist' do

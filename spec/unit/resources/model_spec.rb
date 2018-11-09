@@ -27,18 +27,16 @@ describe 'snipeit_api::model' do
       end
     end
 
-    message = {
-      name: 'HAL 9000',
-      model_number: 'HAL9000',
-      category_id: 3,
-      manufacturer_id: 3,
-    }
-
     it {
       is_expected.to post_http_request('create model[HAL 9000]')
         .with(
-          url: 'http://fakeymcfakerton.corp.mycompany.com/api/v1/models',
-          message: message.to_json,
+          url: model_endpoint,
+          message: {
+            name: 'HAL 9000',
+            model_number: 'HAL9000',
+            category_id: 3,
+            manufacturer_id: 3,
+          }.to_json,
           headers: headers
         )
     }
