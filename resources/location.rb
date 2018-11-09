@@ -19,8 +19,7 @@ load_current_value do |new_resource|
   location = Location.new(endpoint, new_resource.location)
 
   begin
-    location = location.name if location.exists?
-    location location
+    location location.name
   rescue StandardError
     current_value_does_not_exist!
   end

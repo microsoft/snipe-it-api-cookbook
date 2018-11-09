@@ -14,8 +14,7 @@ load_current_value do |new_resource|
   category = Category.new(endpoint, new_resource.category)
 
   begin
-    category = category.name if category.exists?
-    category category
+    category category.name
   rescue StandardError
     current_value_does_not_exist!
   end

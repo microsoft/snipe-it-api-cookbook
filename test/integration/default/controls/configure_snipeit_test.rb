@@ -11,8 +11,8 @@ control 'manufacturers' do
   impact 0.7
   title 'Create manufacturers'
   describe json(content: manufacturers.body) do
-    its(['rows', 0, 'name']) { should eq 'Apple' }
-    its(['rows', 0, 'url']) { should eq 'https://www.apple.com' }
+    its('rows.last') { should include 'name' => 'Apple' }
+    its('rows.last') { should include 'url' => 'https://www.apple.com' }
   end
 end
 
@@ -20,10 +20,8 @@ control 'categories' do
   impact 0.7
   title 'Create categories'
   describe json(content: categories.body) do
-    its(['rows', 0, 'name']) { should eq 'macOS - Desktop' }
-    its(['rows', 0, 'category_type']) { should eq 'asset' }
-    its(['rows', 2, 'name']) { should eq 'macOS - Portable' }
-    its(['rows', 2, 'category_type']) { should eq 'asset' }
+    its('rows.first') { should include 'name' => 'macOS - Desktop' }
+    its('rows.last') { should include 'name' => 'macOS - Portable' }
   end
 end
 
@@ -31,10 +29,8 @@ control 'models' do
   impact 0.7
   title 'Create models'
   describe json(content: models.body) do
-    its(['rows', 0, 'name']) { should eq 'Mac Pro (Early 2009)' }
-    its(['rows', 0, 'manufacturer', 'name']) { should eq 'Apple' }
-    its(['rows', 0, 'category', 'name']) { should eq 'macOS - Desktop' }
-    its(['rows', 0, 'model_number']) { should eq 'MacPro4,1' }
+    its('rows.last') { should include 'name' => 'Mac Pro (Early 2009)' }
+    its('rows.last') { should include 'model_number' => 'MacPro4,1' }
   end
 end
 
@@ -42,12 +38,12 @@ control 'locations' do
   impact 0.7
   title 'Create locations'
   describe json(content: locations.body) do
-    its(['rows', 1, 'name']) { should eq 'Building 1' }
-    its(['rows', 1, 'address']) { should eq '1 Company Lane' }
-    its(['rows', 1, 'city']) { should eq 'San Francisco' }
-    its(['rows', 1, 'state']) { should eq 'CA' }
-    its(['rows', 1, 'country']) { should eq 'US' }
-    its(['rows', 1, 'zip']) { should eq '94130' }
+    its('rows.last') { should include 'name' => 'Building 1' }
+    its('rows.last') { should include 'address' => '1 Company Lane' }
+    its('rows.last') { should include 'city' => 'San Francisco' }
+    its('rows.last') { should include 'state' => 'CA' }
+    its('rows.last') { should include 'country' => 'US' }
+    its('rows.last') { should include 'zip' => '94130' }
   end
 end
 
@@ -55,9 +51,9 @@ control 'assets' do
   impact 0.7
   title 'Create assets'
   describe json(content: assets.body) do
-    its(['rows', 0, 'asset_tag']) { should eq '1234567' }
-    its(['rows', 0, 'serial']) { should eq 'HALAEK123123' }
-    its(['rows', 0, 'status_label', 'name']) { should eq 'Pending' }
-    its(['rows', 0, 'model', 'name']) { should eq 'Mac Pro (Early 2009)' }
+    its('rows.last') { should include 'asset_tag' => '1234567' }
+    its('rows.last') { should include 'serial' => 'HALAEK123123' }
+    its('rows.last', 'status_label') { should include 'id' => 1 }
+    its('rows.last') { should include 'model_number' => 'MacPro4,1' }
   end
 end
