@@ -15,7 +15,7 @@ verifier:
   name: inspec
   reporter:
     - cli
-    - junit:/tmp/junit.xml
+    - junit:/tmp/inspec.xml
   attributes:
     url: <%= ENV['SNIPEIT_URL'] %>
     api_token: <%= ENV['SNIPEIT_TOKEN'] %>

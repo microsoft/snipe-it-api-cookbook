@@ -62,17 +62,17 @@ jobs:
     inputs:
       tkAzureEndpoint: 'Apex Lab - CorpNet'
       tkCommand: test
-      tkKitchenFile: .kitchen.yml
+      tkKitchenFile: kitchen.yml
 
   - task: PublishTestResults@2
     inputs:
       testResultsFormat: JUnit
-      testResultsFiles: /tmp/junit.xml
+      testResultsFiles: /tmp/inspec.xml
 
   - task: chef-software.vsts-chef-tasks.vsts-chef-task-test-kitchen.vsts-chef-task-test-kitchen@1
     displayName: 'Execute Test Kitchen: destroy'
     inputs:
       tkAzureEndpoint: 'Apex Lab - CorpNet'
       tkCommand: destroy
-      tkKitchenFile: .kitchen.yml
+      tkKitchenFile: kitchen.yml
     condition: always()
