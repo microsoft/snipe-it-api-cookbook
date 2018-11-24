@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe 'snipeit_api::manufacturer - create action' do
   step_into :manufacturer
-
   context 'when the manufacturer exists' do
     recipe do
       manufacturer 'Apple' do

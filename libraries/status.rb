@@ -1,17 +1,20 @@
 include SnipeIT::API
 
 class Status
-  def initialize(endpoint, status_label)
+  def initialize(url, token, status_label)
     @status_label = status_label
-    @status = Get.new(endpoint.snipeit_url('statuslabels'), endpoint.headers)
+    endpoint = Endpoint.new(url, token, 'statuslabels', search: status_label)
+    @status = Get.new(endpoint)
   end
 
   class DoesNotExistError < StandardError
   end
 
   def current_value
-    @status.response['rows'].find do |status|
-      status['name'] == @status_label
+    if @status.response['rows'].empty?
+      raise Status::DoesNotExistError, "#{@status_label} status does not exist in the database!"
+    else
+      @status.response['rows'].first
     end
   end
 
@@ -21,13 +24,5 @@ class Status
 
   def id
     current_value['id']
-  rescue NoMethodError
-    raise Status::DoesNotExistError, "#{@status_label} status does not exist in the database!"
-  end
-
-  def exists?
-    @status.response['rows'].any? do |status|
-      status['name'] == @status_label
-    end
   end
 end

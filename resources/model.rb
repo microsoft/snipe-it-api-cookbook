@@ -14,8 +14,11 @@ property :fieldset, String
 default_action :create
 
 load_current_value do |new_resource|
-  endpoint = Endpoint.new(new_resource.url, new_resource.token)
-  model = Model.new(endpoint, new_resource.model_number)
+  model = Model.new(
+    new_resource.url,
+    new_resource.token,
+    new_resource.model_number
+  )
 
   begin
     model_number model.number
@@ -24,14 +27,42 @@ load_current_value do |new_resource|
   end
 end
 
+action_class do
+  def category
+    Category.new(
+      new_resource.url,
+      new_resource.token,
+      new_resource.category
+    )
+  end
+
+  def manufacturer
+    Manufacturer.new(
+      new_resource.url,
+      new_resource.token,
+      new_resource.manufacturer
+    )
+  end
+
+  def fieldset
+    Fieldset.new(
+      new_resource.url,
+      new_resource.token,
+      new_resource.fieldset
+    )
+  end
+
+  def model
+    Model.new(
+      new_resource.url,
+      new_resource.token,
+      new_resource.model
+    )
+  end
+end
+
 action :create do
   converge_if_changed :model_number do
-    endpoint = Endpoint.new(new_resource.url, new_resource.token)
-    category = Category.new(endpoint, new_resource.category)
-    manufacturer = Manufacturer.new(endpoint, new_resource.manufacturer)
-    fieldset = Fieldset.new(endpoint, new_resource.fieldset)
-    model = Model.new(endpoint, new_resource.model)
-
     message = {}
     message[:name] = new_resource.model
     message[:model_number] = new_resource.model_number
@@ -44,9 +75,19 @@ action :create do
       http_request "create #{new_resource}" do
         headers model.headers
         message message.to_json
-        url model.url
+        url model.endpoint_url
         action :post
       end
+    end
+  end
+end
+
+action :delete do
+  converge_by("delete #{new_resource.model} from Snipe-IT") do
+    http_request "delete #{new_resource.model}" do
+      headers model.headers
+      url ::File.join(model.endpoint_url, model.id.to_s)
+      action :delete
     end
   end
 end

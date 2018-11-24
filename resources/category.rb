@@ -10,8 +10,11 @@ property :category_type, String, required: true
 default_action :create
 
 load_current_value do |new_resource|
-  endpoint = Endpoint.new(new_resource.url, new_resource.token)
-  category = Category.new(endpoint, new_resource.category)
+  category = Category.new(
+    new_resource.url,
+    new_resource.token,
+    new_resource.category
+  )
 
   begin
     category category.name
@@ -20,11 +23,18 @@ load_current_value do |new_resource|
   end
 end
 
+action_class do
+  def category
+    Category.new(
+      new_resource.url,
+      new_resource.token,
+      new_resource.category
+    )
+  end
+end
+
 action :create do
   converge_if_changed :category do
-    endpoint = Endpoint.new(new_resource.url, new_resource.token)
-    category = Category.new(endpoint, new_resource.category)
-
     message = {}
     message[:name] = new_resource.category
     message[:category_type] = new_resource.category_type
@@ -33,7 +43,7 @@ action :create do
       http_request "create #{new_resource}" do
         headers category.headers
         message(message.to_json)
-        url category.url
+        url category.endpoint_url
         action :post
       end
     end

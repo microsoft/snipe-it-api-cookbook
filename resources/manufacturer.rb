@@ -10,8 +10,11 @@ property :website, String
 default_action :create
 
 load_current_value do |new_resource|
-  endpoint = Endpoint.new(new_resource.url, new_resource.token)
-  manufacturer = Manufacturer.new(endpoint, new_resource.manufacturer)
+  manufacturer = Manufacturer.new(
+    new_resource.url,
+    new_resource.token,
+    new_resource.manufacturer
+  )
 
   begin
     manufacturer manufacturer.name
@@ -20,11 +23,18 @@ load_current_value do |new_resource|
   end
 end
 
+action_class do
+  def manufacturer
+    Manufacturer.new(
+      new_resource.url,
+      new_resource.token,
+      new_resource.manufacturer
+    )
+  end
+end
+
 action :create do
   converge_if_changed :manufacturer do
-    endpoint = Endpoint.new(new_resource.url, new_resource.token)
-    manufacturer = Manufacturer.new(endpoint, new_resource.manufacturer)
-
     message = {}
     message[:name] = new_resource.manufacturer
     message[:url] = new_resource.website if property_is_set?(:website)
@@ -32,8 +42,8 @@ action :create do
     converge_by("creating #{new_resource} in Snipe-IT") do
       http_request "create #{new_resource}" do
         headers manufacturer.headers
-        message message.to_json
-        url manufacturer.url
+        message(message.to_json)
+        url manufacturer.endpoint_url
         action :post
       end
     end
@@ -41,13 +51,10 @@ action :create do
 end
 
 action :delete do
-  endpoint = Endpoint.new(new_resource.url, new_resource.token)
-  manufacturer = Manufacturer.new(endpoint, new_resource.manufacturer)
-
   converge_by("delete #{new_resource.manufacturer} from Snipe-IT") do
     http_request "delete #{new_resource.manufacturer}" do
       headers manufacturer.headers
-      url ::File.join(manufacturer.url, manufacturer.id.to_s)
+      url ::File.join(manufacturer.endpoint_url, manufacturer.id.to_s)
       action :delete
     end
   end

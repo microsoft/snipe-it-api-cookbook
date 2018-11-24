@@ -16,38 +16,71 @@ property :url, String, required: true
 default_action :create
 
 load_current_value do |new_resource|
-  endpoint = Endpoint.new(new_resource.url, new_resource.token)
-  asset = Asset.new(endpoint, new_resource.asset_tag)
+  asset = Asset.new(
+    new_resource.url,
+    new_resource.token,
+    new_resource.serial_number
+  )
+
   begin
-    machine_name asset.machine_name
+    serial_number asset.serial_number
   rescue StandardError
     current_value_does_not_exist!
   end
 end
 
-action :create do
-  converge_if_changed :machine_name do
-    endpoint = Endpoint.new(new_resource.url, new_resource.token)
-    asset = Asset.new(endpoint, new_resource.asset_tag)
-    status = Status.new(endpoint, new_resource.status)
-    model = Model.new(endpoint, new_resource.model)
-    location = Location.new(endpoint, new_resource.location)
+action_class do
+  def asset
+    Asset.new(
+      new_resource.url,
+      new_resource.token,
+      new_resource.serial_number
+    )
+  end
 
+  def status
+    Status.new(
+      new_resource.url,
+      new_resource.token,
+      new_resource.status
+    )
+  end
+
+  def model
+    Model.new(
+      new_resource.url,
+      new_resource.token,
+      new_resource.model
+    )
+  end
+
+  def location
+    Location.new(
+      new_resource.url,
+      new_resource.token,
+      new_resource.location
+    )
+  end
+end
+
+action :create do
+  converge_if_changed :serial_number do
     message = {}
-    message[:name] = new_resource.machine_name
+
+    message[:rtd_location_id] = location.id if property_is_set?(:location)
+    message[:name] = new_resource.machine_name if property_is_set?(:machine_name)
     message[:asset_tag] = new_resource.asset_tag if property_is_set?(:asset_tag)
     message[:serial] = new_resource.serial_number
     message[:status_id] = status.id
     message[:model_id] = model.id
-    message[:rtd_location_id] = location.id if property_is_set?(:machine_name)
     message[:purchase_date] = new_resource.purchase_date if property_is_set?(:purchase_date)
     message[:supplier] = new_resource.supplier if property_is_set?(:supplier)
 
-    converge_by("creating #{new_resource} in Snipe-IT") do
-      http_request "create #{new_resource}" do
+    converge_by("creating #{new_resource.machine_name || new_resource.serial_number} in Snipe-IT") do
+      http_request "create #{new_resource.machine_name || new_resource.serial_number}" do
         headers asset.headers
         message message.to_json
-        url asset.url
+        url asset.endpoint_url
         action :post
       end
     end
@@ -55,13 +88,10 @@ action :create do
 end
 
 action :delete do
-  endpoint = Endpoint.new(new_resource.url, new_resource.token)
-  asset = Asset.new(endpoint, new_resource.asset_tag)
-
-  converge_by("deleting #{new_resource} in Snipe-IT") do
-    http_request "delete #{new_resource}" do
+  converge_by("deleting #{new_resource.machine_name || new_resource.serial_number} in Snipe-IT") do
+    http_request "delete #{new_resource.machine_name || new_resource.serial_number}" do
       headers asset.headers
-      url ::File.join(asset.url, asset.id.to_s)
+      url ::File.join(asset.endpoint_url, asset.id.to_s)
       action :delete
     end
   end

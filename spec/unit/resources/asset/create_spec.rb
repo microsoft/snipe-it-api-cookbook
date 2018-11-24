@@ -2,8 +2,42 @@ require 'spec_helper'
 
 describe 'snipeit_api::asset - create action' do
   step_into :asset
+  before do
+    stub_request(:get, "#{status_endpoint}?search=Pending")
+      .to_return(
+        body: {
+          total: 1,
+          rows: [
+            {
+              id: 1,
+              name: 'Pending',
+              type: 'pending',
+              notes: 'These assets are not yet ready to be deployed, usually because of configuration or waiting on parts.',
+            },
+          ],
+        }.to_json
+      )
+    stub_request(:get, "#{hardware_endpoint}/byserial/C0123456789")
+      .to_return(body: empty_response)
+  end
 
   context 'when the asset exists' do
+    before do
+      stub_request(:get, "#{hardware_endpoint}/byserial/W80123456789")
+        .to_return(
+          body: {
+            total: 1,
+            rows: [
+              {
+                id: 1,
+                name: 'Magic-Machine',
+                serial: 'W80123456789',
+              },
+            ],
+          }.to_json
+        )
+    end
+
     recipe do
       asset 'asset exists' do
         machine_name 'Magic-Machine'
@@ -15,10 +49,15 @@ describe 'snipeit_api::asset - create action' do
       end
     end
 
-    it { is_expected.to_not post_http_request('create asset[1234567]') }
+    it { is_expected.to_not post_http_request('create asset[Magic-Machine]') }
   end
 
   context 'when the asset does not exist' do
+    before do
+      stub_request(:get, "#{hardware_endpoint}/byserial/W81123456789")
+        .to_return(body: empty_response)
+    end
+
     recipe do
       asset 'create a machine' do
         machine_name 'Does Not Exist'
@@ -51,6 +90,11 @@ describe 'snipeit_api::asset - create action' do
   end
 
   context 'when the location does not exist' do
+    before do
+      stub_request(:get, "#{location_endpoint}?search=Building%2042")
+        .to_return(body: empty_response)
+    end
+
     recipe do
       asset 'creating asset' do
         machine_name 'Does Not Exist'
@@ -68,7 +112,12 @@ describe 'snipeit_api::asset - create action' do
     end
   end
 
-  context 'when the status label, and model does not exist in the database' do
+  context 'when the status label does not exist in the database' do
+    before do
+      stub_request(:get, "#{status_endpoint}?search=Recycled")
+        .to_return(body: empty_response)
+    end
+
     recipe do
       asset 'creating asset' do
         machine_name 'Does Not Exist'
@@ -87,6 +136,11 @@ describe 'snipeit_api::asset - create action' do
   end
 
   context 'when the model does not exist' do
+    before do
+      stub_request(:get, "#{model_endpoint}?search=MacPro6,1")
+        .to_return(body: empty_response)
+    end
+
     recipe do
       asset 'creating asset' do
         machine_name 'Does Not Exist'

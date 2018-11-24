@@ -18,6 +18,11 @@ describe 'snipeit_api::location' do
   end
 
   context 'when the model does not exist' do
+    before do
+      stub_request(:get, "#{location_endpoint}?search=Building%202")
+        .to_return(body: empty_response)
+    end
+
     recipe do
       location 'Building 2' do
         address '16021 NE 36th St'

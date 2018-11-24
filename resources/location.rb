@@ -15,8 +15,11 @@ property :currency, String, default: 'USD'
 default_action :create
 
 load_current_value do |new_resource|
-  endpoint = Endpoint.new(new_resource.url, new_resource.token)
-  location = Location.new(endpoint, new_resource.location)
+  location = Location.new(
+    new_resource.url,
+    new_resource.token,
+    new_resource.location
+  )
 
   begin
     location location.name
@@ -25,11 +28,18 @@ load_current_value do |new_resource|
   end
 end
 
+action_class do
+  def location
+    Location.new(
+      new_resource.url,
+      new_resource.token,
+      new_resource.location
+    )
+  end
+end
+
 action :create do
   converge_if_changed :location do
-    endpoint = Endpoint.new(new_resource.url, new_resource.token)
-    location = Location.new(endpoint, new_resource.location)
-
     message = {}
     message[:name] = new_resource.location
     message[:address] = new_resource.address if property_is_set?(:address)
@@ -42,7 +52,7 @@ action :create do
       http_request "create #{new_resource}" do
         headers location.headers
         message(message.to_json)
-        url location.url
+        url location.endpoint_url
         action :post
       end
     end

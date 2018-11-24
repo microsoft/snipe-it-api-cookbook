@@ -2,25 +2,28 @@ include SnipeIT::API
 
 class Asset
   attr_reader :headers
-  attr_reader :url
+  attr_reader :endpoint_url
 
-  def initialize(endpoint, machine_name)
-    @machine_name = machine_name
+  def initialize(url, token, serial_number)
+    @serial_number = serial_number
+    endpoint = Endpoint.new(url, token, 'hardware', serial_number)
+    @asset = Get.new(endpoint)
     @headers = endpoint.headers
-    @url = endpoint.snipeit_url('hardware')
-    @asset = Get.new(@url, @headers)
+    @endpoint_url = endpoint.snipeit_url
   end
 
   class DoesNotExistError < StandardError
   end
 
   def current_value
-    @asset.response['rows'].find do |asset|
-      asset['machine_name'] == @machine_name
+    if @asset.response['rows'].empty?
+      raise Asset::DoesNotExistError, "#{@serial_number} does not exist in the database!"
+    else
+      @asset.response['rows'].first
     end
   end
 
-  def tag
+  def asset_tag
     current_value['asset_tag']
   end
 
@@ -28,9 +31,11 @@ class Asset
     current_value['name']
   end
 
+  def serial_number
+    current_value['serial']
+  end
+
   def id
     current_value['id']
-  rescue NoMethodError
-    raise Asset::DoesNotExistError, "#{@machine_name} does not exist in the database!"
   end
 end

@@ -2,21 +2,24 @@ include SnipeIT::API
 
 class Model
   attr_reader :headers
-  attr_reader :url
+  attr_reader :endpoint_url
 
-  def initialize(endpoint, model_number)
+  def initialize(url, token, model_number)
     @model_number = model_number
+    endpoint = Endpoint.new(url, token, 'models', search: model_number)
     @headers = endpoint.headers
-    @url = endpoint.snipeit_url('models')
-    @model = Get.new(@url, @headers)
+    @endpoint_url = endpoint.snipeit_url
+    @model = Get.new(endpoint)
   end
 
   class DoesNotExistError < StandardError
   end
 
   def current_value
-    @model.response['rows'].find do |model|
-      model['model_number'] == @model_number
+    if @model.response['rows'].empty?
+      raise Model::DoesNotExistError, "#{@model_number} does not exist in the database!"
+    else
+      @model.response['rows'].first
     end
   end
 
@@ -30,7 +33,5 @@ class Model
 
   def id
     current_value['id']
-  rescue NoMethodError
-    raise Model::DoesNotExistError, "#{@model_number} does not exist in the database!"
   end
 end

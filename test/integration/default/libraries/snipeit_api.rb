@@ -7,10 +7,17 @@ class SnipeITAPI < Inspec.resource(1)
   end
 
   def headers
-    { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{@token}" }
+    {
+      'Authorization' => "Bearer #{@token}",
+      'Content-Type' => 'application/json',
+    }
   end
 
   def response(type, name)
-    inspec.http("#{@url}/api/v1/#{type}", headers: headers, params: {search: URI.encode(name)})
+    inspec.http(
+      ::File.join(@url, 'api', 'v1', type),
+      headers: headers,
+      params: { search: URI.encode(name) }
+    )
   end
 end
