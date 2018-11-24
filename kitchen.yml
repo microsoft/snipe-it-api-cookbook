@@ -16,8 +16,6 @@ verifier:
   reporter:
     - cli
     - junit:/tmp/junit.xml
-  inspec_tests:
-    - test/integration/default
   attributes:
     url: <%= ENV['SNIPEIT_URL'] %>
     api_token: <%= ENV['SNIPEIT_TOKEN'] %>
