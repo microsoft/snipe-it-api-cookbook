@@ -76,23 +76,21 @@ action :create do
     message[:purchase_date] = new_resource.purchase_date if property_is_set?(:purchase_date)
     message[:supplier] = new_resource.supplier if property_is_set?(:supplier)
 
-    converge_by("creating #{new_resource.machine_name || new_resource.serial_number} in Snipe-IT") do
-      http_request "create #{new_resource.machine_name || new_resource.serial_number}" do
-        headers asset.headers
-        message message.to_json
-        url asset.endpoint_url
-        action :post
-      end
+    http_request "create #{new_resource.machine_name || new_resource.serial_number}" do
+      headers asset.headers
+      message message.to_json
+      url asset.endpoint_url
+      not_if { asset.deleted? }
+      action :post
     end
   end
 end
 
 action :delete do
-  converge_by("deleting #{new_resource.machine_name || new_resource.serial_number} in Snipe-IT") do
-    http_request "delete #{new_resource.machine_name || new_resource.serial_number}" do
-      headers asset.headers
-      url ::File.join(asset.endpoint_url, asset.id.to_s)
-      action :delete
-    end
+  http_request "delete #{new_resource.machine_name || new_resource.serial_number}" do
+    headers asset.headers
+    url ::File.join(asset.endpoint_url, asset.id.to_s)
+    not_if { asset.deleted? }
+    action :delete
   end
 end
