@@ -4,6 +4,11 @@ resources:
 
 trigger:
   batch: true
+  branches:
+    include:
+    - master
+    - feature/*
+    - release/*
 
 name: $(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 
