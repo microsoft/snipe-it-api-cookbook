@@ -9,7 +9,7 @@ class Manufacturer
     endpoint = Endpoint.new(url, token, 'manufacturers', search: manufacturer_name)
     @manufacturer = Get.new(endpoint)
     @headers = endpoint.headers
-    @endpoint_url = endpoint.snipeit_url
+    @endpoint_url = endpoint.join_url
   end
 
   class DoesNotExistError < StandardError

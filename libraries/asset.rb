@@ -9,7 +9,7 @@ class Asset
     endpoint = Endpoint.new(url, token, 'hardware', serial_number)
     @asset = Get.new(endpoint)
     @headers = endpoint.headers
-    @endpoint_url = endpoint.snipeit_url
+    @endpoint_url = endpoint.join_url
   end
 
   def exist?

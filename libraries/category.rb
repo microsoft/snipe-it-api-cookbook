@@ -9,7 +9,7 @@ class Category
     endpoint = Endpoint.new(url, token, 'categories', search: category_name)
     @category = Get.new(endpoint)
     @headers = endpoint.headers
-    @endpoint_url = endpoint.snipeit_url
+    @endpoint_url = endpoint.join_url
   end
 
   class DoesNotExistError < StandardError

@@ -12,15 +12,15 @@ module SnipeIT
         @query = query
       end
 
-      def snipeit_url
+      def join_url
         ::File.join(@url, 'api', 'v1', @type)
       end
 
       def uri
         if @type == 'hardware'
-          uri = URI(::File.join(snipeit_url, 'byserial', @query))
+          uri = URI(::File.join(join_url, 'byserial', @query))
         elsif @query.is_a? Hash
-          uri = URI(snipeit_url)
+          uri = URI(join_url)
           uri.query = URI.encode_www_form(@query)
         end
 

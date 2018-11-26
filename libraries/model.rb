@@ -8,7 +8,7 @@ class Model
     @model_number = model_number
     endpoint = Endpoint.new(url, token, 'models', search: model_number)
     @headers = endpoint.headers
-    @endpoint_url = endpoint.snipeit_url
+    @endpoint_url = endpoint.join_url
     @model = Get.new(endpoint)
   end
 
