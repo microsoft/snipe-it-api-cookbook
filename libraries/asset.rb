@@ -13,7 +13,7 @@ class Asset
   end
 
   def exist?
-    !@asset.response['rows'].empty?
+    @asset.response['rows'].any?
   end
 
   def deleted?
