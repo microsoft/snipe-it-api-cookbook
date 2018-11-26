@@ -2,6 +2,9 @@ resources:
 - repo: self
   clean: true
 
+trigger:
+  batch: true
+
 name: $(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 
 jobs:
@@ -76,3 +79,11 @@ jobs:
       tkCommand: destroy
       tkKitchenFile: kitchen.yml
     condition: always()
+
+  - task: SSH@0
+    displayName: 'Purge the soft deletes from the Snipe-IT test instance'
+    condition: always()
+    inputs:
+      sshEndpoint: snipeit-test-endpoint
+      runOptions: inline
+      inline: 'cd /var/www/snipeit; php artisan snipeit:purge -n --force=true'

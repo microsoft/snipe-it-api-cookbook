@@ -53,8 +53,9 @@ describe 'snipeit_api::asset - create action' do
   end
 
   context 'when the asset does not exist' do
+    serial_number = 'W81123456789'
     before do
-      stub_request(:get, "#{hardware_endpoint}/byserial/W81123456789")
+      stub_request(:get, "#{hardware_endpoint}/byserial/#{serial_number}")
         .to_return(body: empty_response)
     end
 
@@ -62,7 +63,7 @@ describe 'snipeit_api::asset - create action' do
       asset 'create a machine' do
         machine_name 'Does Not Exist'
         asset_tag '0000000'
-        serial_number 'W81123456789'
+        serial_number serial_number
         model 'MacPro4,1'
         location 'Building 1'
         token chef_vault_item('snipe-it', 'api')['key']
@@ -74,7 +75,7 @@ describe 'snipeit_api::asset - create action' do
       rtd_location_id: 1,
       name: 'Does Not Exist',
       asset_tag: '0000000',
-      serial: 'W81123456789',
+      serial: serial_number,
       status_id: 1,
       model_id: 4,
     }

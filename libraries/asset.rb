@@ -12,15 +12,16 @@ class Asset
     @endpoint_url = endpoint.snipeit_url
   end
 
-  class DoesNotExistError < StandardError
+  def exist?
+    !@asset.response['rows'].empty?
+  end
+
+  def deleted?
+    exist? && current_value['deleted_at']
   end
 
   def current_value
-    if @asset.response['rows'].empty?
-      raise Asset::DoesNotExistError, "#{@serial_number} does not exist in the database!"
-    else
-      @asset.response['rows'].first
-    end
+    @asset.response['rows'].first
   end
 
   def asset_tag

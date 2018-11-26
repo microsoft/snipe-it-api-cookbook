@@ -4,15 +4,19 @@ driver:
   provider: parallels
 
 provisioner:
-  product_name: chef
-  product_version: latest
-  always_update_cookbooks: true
   multiple_converge: 2
   enforce_idempotency: true
   data_bags_path: ./test/fixtures/data_bags
+  attributes:
+    snipeit:
+      api:
+        instance: <%= ENV['SNIPEIT_URL'] %>
+        token: <%= ENV['SNIPEIT_TOKEN'] %>
 
 verifier:
   name: inspec
+  inspec_tests:
+    - test/integration/default
   reporter:
     - cli
     - junit:/tmp/inspec.xml
@@ -31,17 +35,21 @@ platforms:
     vnet_id: /subscriptions/<%= ENV['AZURE_SUBSCRIPTION_ID'] %>/resourceGroups/<%= ENV['AZURE_ER_RESOURCE_GROUP'] %>/providers/Microsoft.Network/virtualNetworks/<%= ENV['AZURE_ER_VNET_NAME'] %>
     subnet_id: Subnet-1
 
-- name: macos-10.13
-- name: macos-10.14
-
 suites:
-- name: default
+- name: configure
   run_list:
     - recipe[snipeit_api_test::configure_snipeit]
-  includes:
-    - ubuntu-16.04
-  attributes:
-    snipeit:
-      api:
-        instance: <%= ENV['SNIPEIT_URL'] %>
-        token: <%= ENV['SNIPEIT_TOKEN'] %>
+  verifier:
+    controls:
+    - create-manufacturers
+    - create-categories
+    - create-models
+    - create-locations
+    - create-assets
+
+- name: delete
+  run_list:
+    - recipe[snipeit_api_test::delete_items_from_snipeit]
+  verifier:
+    controls:
+    - delete-assets

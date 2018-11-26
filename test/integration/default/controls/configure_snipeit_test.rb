@@ -2,7 +2,7 @@ url = attribute('url', decription: 'The Snipe-IT URL')
 token = attribute('api_token', description: 'The API token for Snipe-IT')
 snipeit = snipeit_api(url, token)
 
-control 'manufacturers' do
+control 'create-manufacturers' do
   impact 0.7
   title 'Create manufacturers'
   describe json(content: snipeit.response('manufacturers', 'Apple').body) do
@@ -12,7 +12,7 @@ control 'manufacturers' do
   end
 end
 
-control 'categories' do
+control 'create-categories' do
   impact 0.7
   title 'Create categories'
   categories = ['macOS - Desktop', 'macOS - Portable']
@@ -25,7 +25,7 @@ control 'categories' do
   end
 end
 
-control 'models' do
+control 'create-models' do
   impact 0.7
   title 'Create models'
   describe json(content: snipeit.response('models', 'Mac Pro (Early 2009)').body) do
@@ -35,7 +35,7 @@ control 'models' do
   end
 end
 
-control 'locations' do
+control 'create-locations' do
   impact 0.7
   title 'Create locations'
   describe json(content: snipeit.response('locations', 'Building 1').body) do
@@ -49,14 +49,14 @@ control 'locations' do
   end
 end
 
-control 'assets' do
+control 'create-assets' do
   impact 0.7
   title 'Create assets'
   describe json(content: snipeit.response('hardware', 'HALAEK123123').body) do
     its('total') { should cmp 1 }
-    its('rows.first') { should include 'asset_tag' => '1234567' }
     its('rows.first') { should include 'serial' => 'HALAEK123123' }
     its(['rows', 0, 'status_label']) { should include 'name' => 'Pending' }
     its('rows.first') { should include 'model_number' => 'MacPro4,1' }
+    its('rows.first') { should include 'deleted_at' => nil }
   end
 end
