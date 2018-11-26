@@ -2,20 +2,25 @@ include SnipeIT::API
 
 class Location
   attr_reader :headers
-  attr_reader :url
+  attr_reader :endpoint_url
 
-  def initialize(endpoint, location_name)
+  def initialize(url, token, location_name)
     @location_name = location_name
+    endpoint = Endpoint.new(url, token, 'locations', search: location_name)
+    @location = Get.new(endpoint)
     @headers = endpoint.headers
-    @url = endpoint.snipeit_url('locations')
-    @location = Get.new(@url, @headers)
+    @endpoint_url = endpoint.join_url
   end
 
   class DoesNotExistError < StandardError
   end
 
   def current_value
-    @location.response['rows'].find { |location| location['name'] == @location_name }
+    if @location.response['rows'].empty?
+      raise Location::DoesNotExistError, "#{@location_name} does not exist in the database!"
+    else
+      @location.response['rows'].first
+    end
   end
 
   def name
@@ -24,7 +29,5 @@ class Location
 
   def id
     current_value['id']
-  rescue NoMethodError
-    raise Location::DoesNotExistError, "#{@location_name} does not exist in the database!"
   end
 end

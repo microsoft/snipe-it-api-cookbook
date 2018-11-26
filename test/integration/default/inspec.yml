@@ -5,4 +5,4 @@ copyright: Microsoft
 copyright_email: chef@microsoft.com
 license: MIT
 summary: Verify that Snipe-IT is configured via the API
-version: 0.1.0
+version: 0.2.0

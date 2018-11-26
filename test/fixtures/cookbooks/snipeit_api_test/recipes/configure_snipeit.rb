@@ -28,9 +28,9 @@ model 'Mac Pro (Early 2009)' do
   url url
 end
 
-asset '1234567' do
+asset 'create an asset' do
   serial_number 'HALAEK123123'
-  model 'Mac Pro (Early 2009)'
+  model 'MacPro4,1'
   token api_token
   url url
 end

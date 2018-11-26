@@ -2,18 +2,24 @@ include SnipeIT::API
 
 class Category
   attr_reader :headers
-  attr_reader :url
+  attr_reader :endpoint_url
 
-  def initialize(endpoint, category_name)
+  def initialize(url, token, category_name)
     @category_name = category_name
-    @url = endpoint.snipeit_url('categories')
+    endpoint = Endpoint.new(url, token, 'categories', search: category_name)
+    @category = Get.new(endpoint)
     @headers = endpoint.headers
-    @category = Get.new(@url, @headers)
+    @endpoint_url = endpoint.join_url
+  end
+
+  class DoesNotExistError < StandardError
   end
 
   def current_value
-    @category.response['rows'].find do |category|
-      category['name'] == @category_name
+    if @category.response['rows'].empty?
+      raise Category::DoesNotExistError, "#{@category_name} does not exist in the database!"
+    else
+      @category.response['rows'].first
     end
   end
 
@@ -23,11 +29,5 @@ class Category
 
   def name
     current_value['name']
-  end
-
-  def exists?
-    @category.response['rows'].any? do |category|
-      category['name'] == @category_name
-    end
   end
 end

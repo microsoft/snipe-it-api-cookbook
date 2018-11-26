@@ -4,7 +4,7 @@ maintainer_email 'chef@microsoft.com'
 license 'MIT'
 description 'Installs/Configures test'
 long_description 'Installs/Configures test'
-version '0.1.0'
+version '0.2.0'
 chef_version '>= 13.0'
 
 depends 'snipeit_api'

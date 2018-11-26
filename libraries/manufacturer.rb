@@ -2,21 +2,24 @@ include SnipeIT::API
 
 class Manufacturer
   attr_reader :headers
-  attr_reader :url
+  attr_reader :endpoint_url
 
-  def initialize(endpoint, manufacturer_name)
+  def initialize(url, token, manufacturer_name)
     @manufacturer_name = manufacturer_name
+    endpoint = Endpoint.new(url, token, 'manufacturers', search: manufacturer_name)
+    @manufacturer = Get.new(endpoint)
     @headers = endpoint.headers
-    @url = endpoint.snipeit_url('manufacturers')
-    @manufacturer = Get.new(@url, @headers)
+    @endpoint_url = endpoint.join_url
   end
 
   class DoesNotExistError < StandardError
   end
 
   def current_value
-    @manufacturer.response['rows'].find do |manufacturer|
-      manufacturer['name'] == @manufacturer_name
+    if @manufacturer.response['rows'].empty?
+      raise Manufacturer::DoesNotExistError, "#{@manufacturer_name} does not exist in the database!"
+    else
+      @manufacturer.response['rows'].first
     end
   end
 
@@ -26,7 +29,5 @@ class Manufacturer
 
   def id
     current_value['id']
-  rescue NoMethodError
-    raise Manufacturer::DoesNotExistError, "#{@manufacturer_name} does not exist in the database!"
   end
 end

@@ -7,7 +7,7 @@ class Fieldset
   def initialize(endpoint, fieldset)
     @fieldset = fieldset
     @headers = endpoint.headers
-    @url = endpoint.snipeit_url('fieldsets')
+    @url = endpoint.join_url('fieldsets')
     @fieldsets = Get.new(@url, @headers)
   end
 

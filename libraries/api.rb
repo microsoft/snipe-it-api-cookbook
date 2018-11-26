@@ -5,13 +5,26 @@ require 'json'
 module SnipeIT
   module API
     class Endpoint
-      def initialize(url, token)
-        @url = url
+      def initialize(url, token, type, query)
         @token = token
+        @url = url
+        @type = type
+        @query = query
       end
 
-      def snipeit_url(resource_type)
-        ::File.join([@url, 'api', 'v1', resource_type])
+      def join_url
+        ::File.join(@url, 'api', 'v1', @type)
+      end
+
+      def uri
+        if @type == 'hardware'
+          uri = URI(::File.join(join_url, 'byserial', @query))
+        elsif @query.is_a? Hash
+          uri = URI(join_url)
+          uri.query = URI.encode_www_form(@query)
+        end
+
+        uri
       end
 
       def headers
@@ -23,9 +36,9 @@ module SnipeIT
     end
 
     class Get < Net::HTTP::Get
-      def initialize(url, headers)
-        @uri = URI(url)
-        super @uri, headers
+      def initialize(endpoint)
+        @uri = endpoint.uri
+        super @uri, endpoint.headers
       end
 
       def response
